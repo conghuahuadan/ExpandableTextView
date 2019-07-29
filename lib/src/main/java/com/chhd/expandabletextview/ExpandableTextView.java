@@ -2,28 +2,26 @@ package com.chhd.expandabletextview;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.text.DynamicLayout;
 import android.text.Layout;
-import android.text.Selection;
-import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.TextUtils;
-import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewTreeObserver;
-import android.widget.TextView;
 
 import java.lang.reflect.Field;
 
+/**
+ * 改自Carbs0126/ExpandableTextView，主要新增展开图标、收起图标的属性
+ *
+ * @author 陈伟强 (2019/7/29)
+ */
 public class ExpandableTextView extends android.support.v7.widget.AppCompatTextView {
 
     private final String TAG = this.getClass().getSimpleName();
@@ -39,8 +37,6 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
     private static final int MAX_LINES_ON_SHRINK = 2;
     private static final int TO_EXPAND_HINT_COLOR = 0xFF3498DB;
     private static final int TO_SHRINK_HINT_COLOR = 0xFFE74C3C;
-    private static final int TO_EXPAND_HINT_COLOR_BG_PRESSED = 0x55999999;
-    private static final int TO_SHRINK_HINT_COLOR_BG_PRESSED = 0x55999999;
     private static final boolean TOGGLE_ENABLE = true;
     private static final boolean SHOW_TO_EXPAND_HINT = true;
     private static final boolean SHOW_TO_SHRINK_HINT = true;
@@ -48,6 +44,10 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
     private String mEllipsisHint;
     private String mToExpandHint;
     private String mToShrinkHint;
+    private Drawable mToExpandIcon;
+    private Drawable mToShrinkIcon;
+    private int mExpandIconVerticalAlign = AlignImageSpan.ALIGN_CENTER;
+    private int mShrinkIconVerticalAlign = AlignImageSpan.ALIGN_CENTER;
     private String mGapToExpandHint = GAP_TO_EXPAND_HINT;
     private String mGapToShrinkHint = GAP_TO_SHRINK_HINT;
     private boolean mToggleEnable = TOGGLE_ENABLE;
@@ -56,8 +56,6 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
     private int mMaxLinesOnShrink = MAX_LINES_ON_SHRINK;
     private int mToExpandHintColor = TO_EXPAND_HINT_COLOR;
     private int mToShrinkHintColor = TO_SHRINK_HINT_COLOR;
-    private int mToExpandHintColorBgPressed = TO_EXPAND_HINT_COLOR_BG_PRESSED;
-    private int mToShrinkHintColorBgPressed = TO_SHRINK_HINT_COLOR_BG_PRESSED;
     private int mCurrState = STATE_SHRINK;
 
     private TouchableSpan mTouchableSpan;
@@ -109,21 +107,28 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
                 TO_EXPAND_HINT_COLOR);
         mToShrinkHintColor = a.getInteger(R.styleable.ExpandableTextView_etv_ToShrinkHintColor,
                 TO_SHRINK_HINT_COLOR);
-        mToExpandHintColorBgPressed =
-                a.getInteger(R.styleable.ExpandableTextView_etv_ToExpandHintColorBgPressed,
-                        TO_EXPAND_HINT_COLOR_BG_PRESSED);
-        mToShrinkHintColorBgPressed =
-                a.getInteger(R.styleable.ExpandableTextView_etv_ToShrinkHintColorBgPressed,
-                        TO_SHRINK_HINT_COLOR_BG_PRESSED);
+//        mToExpandHintColorBgPressed =
+//                a.getInteger(R.styleable.ExpandableTextView_etv_ToExpandHintColorBgPressed,
+//                        TO_EXPAND_HINT_COLOR_BG_PRESSED);
+//        mToShrinkHintColorBgPressed =
+//                a.getInteger(R.styleable.ExpandableTextView_etv_ToShrinkHintColorBgPressed,
+//                        TO_SHRINK_HINT_COLOR_BG_PRESSED);
         mCurrState = a.getInteger(R.styleable.ExpandableTextView_etv_InitState, STATE_SHRINK);
         mGapToExpandHint = a.getString(R.styleable.ExpandableTextView_etv_GapToExpandHint);
         mGapToShrinkHint = a.getString(R.styleable.ExpandableTextView_etv_GapToShrinkHint);
+        mToExpandIcon = a.getDrawable(R.styleable.ExpandableTextView_etv_ToExpandIcon);
+        mToShrinkIcon = a.getDrawable(R.styleable.ExpandableTextView_etv_ToShrinkIcon);
+        mExpandIconVerticalAlign =
+                a.getInteger(R.styleable.ExpandableTextView_etv_ExpandIconVerticalAlign,
+                        AlignImageSpan.ALIGN_CENTER);
+        mShrinkIconVerticalAlign =
+                a.getInteger(R.styleable.ExpandableTextView_etv_ShrinkIconVerticalAlign,
+                        AlignImageSpan.ALIGN_CENTER);
         a.recycle();
     }
 
     private void init() {
         mTouchableSpan = new TouchableSpan();
-//        setMovementMethod(new LinkTouchMovementMethod()); // 结尾的按压效果
         if (TextUtils.isEmpty(mEllipsisHint)) {
             mEllipsisHint = ELLIPSIS_HINT;
         }
@@ -143,18 +148,6 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
             mExpandableClickListener = new ExpandableClickListener();
             setOnClickListener(mExpandableClickListener);
         }
-        getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                ViewTreeObserver obs = getViewTreeObserver();
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    obs.removeOnGlobalLayoutListener(this);
-                } else {
-                    obs.removeGlobalOnLayoutListener(this);
-                }
-                setTextInternal(getNewTextByConfig(), mBufferType);
-            }
-        });
     }
 
     /* ----------------------------- ▼内部方法▼ -----------------------------  */
@@ -207,9 +200,19 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
                 int remainWidth = getValidLayout().getWidth() -
                         (int) (mTextPaint.measureText(mOrigText.subSequence(indexStart,
                                 indexEndTrimmed).toString()) + 0.5);
-                float widthTailReplaced = mTextPaint.measureText(getContentOfString(mEllipsisHint)
-                        + (mShowToExpandHint ? (getContentOfString(mToExpandHint)
-                        + getContentOfString(mGapToExpandHint)) : ""));
+
+                float widthTailReplaced;
+                if (mToExpandIcon == null) {
+                    widthTailReplaced = mTextPaint.measureText(getContentOfString(mEllipsisHint)
+                            + (mShowToExpandHint ? (getContentOfString(mToExpandHint)
+                            + getContentOfString(mGapToExpandHint)) : ""));
+                } else {
+                    widthTailReplaced = mTextPaint.measureText(getContentOfString(mEllipsisHint)
+                            + (mShowToExpandHint ? (getContentOfString(mGapToExpandHint)) : ""));
+                    mToExpandIcon.setBounds(0, 0,
+                            mToExpandIcon.getIntrinsicWidth(), mToExpandIcon.getIntrinsicHeight());
+                    widthTailReplaced = widthTailReplaced + mToExpandIcon.getIntrinsicWidth();
+                }
 
                 int indexEndTrimmedRevised = indexEndTrimmed;
                 if (remainWidth > widthTailReplaced) {
@@ -247,11 +250,21 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
                 SpannableStringBuilder ssbShrink = new SpannableStringBuilder(fixText)
                         .append(mEllipsisHint);
                 if (mShowToExpandHint) {
-                    ssbShrink.append(getContentOfString(mGapToExpandHint)
-                            + getContentOfString(mToExpandHint));
-                    ssbShrink.setSpan(mTouchableSpan, ssbShrink.length()
-                                    - getLengthOfString(mToExpandHint), ssbShrink.length(),
-                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    if (mToExpandIcon == null) {
+                        ssbShrink.append(getContentOfString(mGapToExpandHint)
+                                + getContentOfString(mToExpandHint));
+                        ssbShrink.setSpan(mTouchableSpan, ssbShrink.length()
+                                        - getLengthOfString(mToExpandHint), ssbShrink.length(),
+                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    } else {
+                        ssbShrink.append(getContentOfString(mGapToExpandHint));
+                        ssbShrink.append(" ");
+                        AlignImageSpan sp = new AlignImageSpan(mToExpandIcon,
+                                mExpandIconVerticalAlign);
+                        ssbShrink.setSpan(sp, ssbShrink.length() - 1, ssbShrink.length(),
+                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }
+
                 }
                 return ssbShrink;
             }
@@ -268,11 +281,23 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
                     return mOrigText;
                 }
 
-                SpannableStringBuilder ssbExpand = new SpannableStringBuilder(mOrigText)
-                        .append(mGapToShrinkHint).append(mToShrinkHint);
-                ssbExpand.setSpan(mTouchableSpan, ssbExpand.length() -
-                                getLengthOfString(mToShrinkHint), ssbExpand.length(),
-                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                SpannableStringBuilder ssbExpand;
+                if (mToShrinkIcon == null) {
+                    ssbExpand = new SpannableStringBuilder(mOrigText)
+                            .append(mGapToShrinkHint).append(mToShrinkHint);
+                    ssbExpand.setSpan(mTouchableSpan, ssbExpand.length() -
+                                    getLengthOfString(mToShrinkHint), ssbExpand.length(),
+                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                } else {
+                    ssbExpand = new SpannableStringBuilder(mOrigText)
+                            .append(mGapToShrinkHint);
+                    ssbExpand.append(" ");
+                    mToShrinkIcon.setBounds(0, 0,
+                            mToShrinkIcon.getIntrinsicWidth(), mToShrinkIcon.getIntrinsicHeight());
+                    AlignImageSpan sp = new AlignImageSpan(mToExpandIcon, mShrinkIconVerticalAlign);
+                    ssbExpand.setSpan(sp, ssbExpand.length() - 1, ssbExpand.length(),
+                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
                 return ssbExpand;
             }
         }
@@ -330,26 +355,14 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        Log.i(TAG, "onMeasure: ");
-    }
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        Log.i(TAG, "onDraw: ");
+        setTextInternal(getNewTextByConfig(), mBufferType);
     }
 
     @Override
     public void setText(CharSequence text, BufferType type) {
-        Log.i(TAG, "setText!!!!!!!!: ");
         mOrigText = text;
         mBufferType = type;
         setTextInternal(getNewTextByConfig(), type);
-        f1();
-    }
-
-    private void f1() {
-        Log.i(TAG, "f1: ");
     }
 
     /* ----------------------------- ▼对外方法▼ -----------------------------  */
@@ -358,22 +371,9 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
         return mCurrState;
     }
 
-    public void updateForRecyclerView(CharSequence text,
-                                      int futureTextViewWidth, int expandState) {
-        mFutureTextViewWidth = futureTextViewWidth;
-        mCurrState = expandState;
-        setText(text);
-    }
-
-    public void updateForRecyclerView(CharSequence text,
-                                      BufferType type, int futureTextViewWidth) {
-        mFutureTextViewWidth = futureTextViewWidth;
-        setText(text, type);
-    }
-
-    public void updateForRecyclerView(CharSequence text, int futureTextViewWidth) {
-        mFutureTextViewWidth = futureTextViewWidth;
-        setText(text);
+    public void setExpandState(int currState) {
+        this.mCurrState = currState;
+        setTextInternal(getNewTextByConfig(), mBufferType);
     }
 
     /* ----------------------------- ▼内部类▼ -----------------------------  */
@@ -434,11 +434,6 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
     }
 
     private class TouchableSpan extends ClickableSpan {
-        private boolean mIsPressed;
-
-        public void setPressed(boolean isSelected) {
-            mIsPressed = isSelected;
-        }
 
         @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
         @Override
@@ -456,70 +451,12 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
             switch (mCurrState) {
                 case STATE_SHRINK:
                     ds.setColor(mToExpandHintColor);
-                    ds.bgColor = mIsPressed ? mToExpandHintColorBgPressed : 0;
                     break;
                 case STATE_EXPAND:
                     ds.setColor(mToShrinkHintColor);
-                    ds.bgColor = mIsPressed ? mToShrinkHintColorBgPressed : 0;
                     break;
             }
             ds.setUnderlineText(false);
-        }
-    }
-
-    public class LinkTouchMovementMethod extends LinkMovementMethod {
-        private TouchableSpan mPressedSpan;
-
-        @Override
-        public boolean onTouchEvent(TextView textView, Spannable spannable, MotionEvent event) {
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                mPressedSpan = getPressedSpan(textView, spannable, event);
-                if (mPressedSpan != null) {
-                    mPressedSpan.setPressed(true);
-                    Selection.setSelection(spannable, spannable.getSpanStart(mPressedSpan),
-                            spannable.getSpanEnd(mPressedSpan));
-                }
-            } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-                TouchableSpan touchedSpan = getPressedSpan(textView, spannable, event);
-                if (mPressedSpan != null && touchedSpan != mPressedSpan) {
-                    mPressedSpan.setPressed(false);
-                    mPressedSpan = null;
-                    Selection.removeSelection(spannable);
-                }
-            } else {
-                if (mPressedSpan != null) {
-                    mPressedSpan.setPressed(false);
-                    super.onTouchEvent(textView, spannable, event);
-                }
-                mPressedSpan = null;
-                Selection.removeSelection(spannable);
-            }
-            return true;
-        }
-
-        private TouchableSpan getPressedSpan(TextView textView,
-                                             Spannable spannable,
-                                             MotionEvent event) {
-
-            int x = (int) event.getX();
-            int y = (int) event.getY();
-
-            x -= textView.getTotalPaddingLeft();
-            y -= textView.getTotalPaddingTop();
-
-            x += textView.getScrollX();
-            y += textView.getScrollY();
-
-            Layout layout = textView.getLayout();
-            int line = layout.getLineForVertical(y);
-            int off = layout.getOffsetForHorizontal(line, x);
-
-            TouchableSpan[] link = spannable.getSpans(off, off, TouchableSpan.class);
-            TouchableSpan touchedSpan = null;
-            if (link.length > 0) {
-                touchedSpan = link[0];
-            }
-            return touchedSpan;
         }
     }
 

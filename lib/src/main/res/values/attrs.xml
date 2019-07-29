@@ -1,22 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="ExpandableTextView">
+        <!-- 收起行数 -->
         <attr name="etv_MaxLinesOnShrink" format="reference|integer" />
+        <!-- 省略提示 -->
         <attr name="etv_EllipsisHint" format="reference|string" />
+        <!-- 展开提示 -->
         <attr name="etv_ToExpandHint" format="reference|string" />
+        <!-- 收起提示 -->
         <attr name="etv_ToShrinkHint" format="reference|string" />
+        <!-- 展开间距 -->
         <attr name="etv_GapToExpandHint" format="reference|string" />
+        <!-- 收起间距 -->
         <attr name="etv_GapToShrinkHint" format="reference|string" />
+        <!-- 允许点击 -->
         <attr name="etv_EnableToggle" format="reference|boolean" />
+        <!-- 显示展开提示内容 -->
         <attr name="etv_ToExpandHintShow" format="reference|boolean" />
+        <!-- 显示收起提示内容 -->
         <attr name="etv_ToShrinkHintShow" format="reference|boolean" />
+        <!-- 展开提示颜色 -->
         <attr name="etv_ToExpandHintColor" format="reference|color" />
+        <!-- 收起提示颜色 -->
         <attr name="etv_ToShrinkHintColor" format="reference|color" />
-        <attr name="etv_ToExpandHintColorBgPressed" format="reference|color" />
-        <attr name="etv_ToShrinkHintColorBgPressed" format="reference|color" />
+        <!-- 初次状态 -->
         <attr name="etv_InitState" format="enum">
             <enum name="shrink" value="0" />
             <enum name="expand" value="1" />
+        </attr>
+        <!-- 展开图标 -->
+        <attr name="etv_ToExpandIcon" format="reference" />
+        <!-- 收起图标 -->
+        <attr name="etv_ToShrinkIcon" format="reference" />
+        <!-- 展开图标对齐方式 -->
+        <attr name="etv_ExpandIconVerticalAlign" format="enum">
+            <enum name="align_bottom" value="0" />
+            <enum name="align_baseline" value="1" />
+            <enum name="align_top" value="3" />
+            <enum name="align_center" value="4" />
+        </attr>
+        <!-- 收起图标对齐方式 -->
+        <attr name="etv_ShrinkIconVerticalAlign" format="enum">
+            <enum name="align_bottom" value="0" />
+            <enum name="align_baseline" value="1" />
+            <enum name="align_top" value="3" />
+            <enum name="align_center" value="4" />
         </attr>
     </declare-styleable>
 </resources>

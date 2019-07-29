@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ExpandableTextView">
+        <attr name="etv_MaxLinesOnShrink" format="reference|integer" />
+        <attr name="etv_EllipsisHint" format="reference|string" />
+        <attr name="etv_ToExpandHint" format="reference|string" />
+        <attr name="etv_ToShrinkHint" format="reference|string" />
+        <attr name="etv_GapToExpandHint" format="reference|string" />
+        <attr name="etv_GapToShrinkHint" format="reference|string" />
+        <attr name="etv_EnableToggle" format="reference|boolean" />
+        <attr name="etv_ToExpandHintShow" format="reference|boolean" />
+        <attr name="etv_ToShrinkHintShow" format="reference|boolean" />
+        <attr name="etv_ToExpandHintColor" format="reference|color" />
+        <attr name="etv_ToShrinkHintColor" format="reference|color" />
+        <attr name="etv_ToExpandHintColorBgPressed" format="reference|color" />
+        <attr name="etv_ToShrinkHintColorBgPressed" format="reference|color" />
+        <attr name="etv_InitState" format="enum">
+            <enum name="shrink" value="0" />
+            <enum name="expand" value="1" />
+        </attr>
+    </declare-styleable>
+</resources>

@@ -11,14 +11,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.ref.WeakReference;
 
-/**
- * Created by wangkunlin
- * On 2017-03-15
- */
-public class AlignImageSpan extends ImageSpan {
+class AlignImageSpan extends ImageSpan {
 
-    public static final int ALIGN_TOP = 3; // 顶部对齐
-    public static final int ALIGN_CENTER = 4; // 垂直居中
+    static final int ALIGN_TOP = 3; // 顶部对齐
+    static final int ALIGN_CENTER = 4; // 垂直居中
 
     @IntDef({ALIGN_BOTTOM, ALIGN_BASELINE, ALIGN_TOP, ALIGN_CENTER})
     @Retention(RetentionPolicy.SOURCE)
@@ -89,14 +85,6 @@ public class AlignImageSpan extends ImageSpan {
         return rect.right;
     }
 
-    /**
-     * 这里的 x, y, top 以及 bottom 都是基于整个 TextView 的坐标系的坐标
-     *
-     * @param x      drawable 绘制的起始 x 坐标
-     * @param top    当前行最高处，在 TextView 中的 y 坐标
-     * @param y      当前行的 BaseLine 在 TextView 中的 y 坐标
-     * @param bottom 当前行最低处，在 TextView 中的 y 坐标
-     */
     @Override
     public void draw(Canvas canvas, CharSequence text, int start, int end,
                      float x, int top, int y, int bottom,

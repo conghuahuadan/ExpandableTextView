@@ -18,7 +18,10 @@ import android.view.View;
 import java.lang.reflect.Field;
 
 /**
- * 改自Carbs0126/ExpandableTextView，主要新增展开图标、收起图标的属性
+ * 改自 Carbs0126 / ExpandableTextView
+ *
+ * · 新增展开图标、收起图标的属性
+ * · 支持“\n”
  *
  * @author 陈伟强 (2019/7/29)
  */
@@ -41,17 +44,24 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
     private static final boolean SHOW_TO_EXPAND_HINT = true;
     private static final boolean SHOW_TO_SHRINK_HINT = true;
 
+    /** 省略符号 */
     private String mEllipsisHint;
+    /** 展开文本 */
     private String mToExpandHint;
+    /** 收起文本 */
     private String mToShrinkHint;
     private Drawable mToExpandIcon;
     private Drawable mToShrinkIcon;
     private int mExpandIconVerticalAlign = AlignImageSpan.ALIGN_CENTER;
     private int mShrinkIconVerticalAlign = AlignImageSpan.ALIGN_CENTER;
+    /** 左侧展开文本的间隔 */
     private String mGapToExpandHint = GAP_TO_EXPAND_HINT;
+    /** 左侧收起文本的间隔 */
     private String mGapToShrinkHint = GAP_TO_SHRINK_HINT;
     private boolean mToggleEnable = TOGGLE_ENABLE;
+    /** 显示展开文本 */
     private boolean mShowToExpandHint = SHOW_TO_EXPAND_HINT;
+    /** 显示收起文本 */
     private boolean mShowToShrinkHint = SHOW_TO_SHRINK_HINT;
     private int mMaxLinesOnShrink = MAX_LINES_ON_SHRINK;
     private int mToExpandHintColor = TO_EXPAND_HINT_COLOR;
@@ -183,12 +193,15 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
                         Layout.Alignment.ALIGN_NORMAL,
                         1.0f, 0.0f, false);
                 mTextLineCount = mLayout.getLineCount();
-
                 if (mTextLineCount <= mMaxLinesOnShrink) {
                     return mOrigText;
                 }
+                // 计算MaxLines行文本末端的下标
                 int indexEnd = getValidLayout().getLineEnd(mMaxLinesOnShrink - 1);
+                // 计算MaxLines行文本开端的下标
                 int indexStart = getValidLayout().getLineStart(mMaxLinesOnShrink - 1);
+
+                // 被修剪过的文本末端下标
                 int indexEndTrimmed = indexEnd
                         - getLengthOfString(mEllipsisHint)
                         - (mShowToExpandHint ? getLengthOfString(mToExpandHint)
@@ -197,10 +210,12 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
                     indexEndTrimmed = indexEnd;
                 }
 
+                // 剩余宽度
                 int remainWidth = getValidLayout().getWidth() -
                         (int) (mTextPaint.measureText(mOrigText.subSequence(indexStart,
                                 indexEndTrimmed).toString()) + 0.5);
 
+                // 将被替换的宽度
                 float widthTailReplaced;
                 if (mToExpandIcon == null) {
                     widthTailReplaced = mTextPaint.measureText(getContentOfString(mEllipsisHint)
@@ -215,19 +230,26 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
                 }
 
                 int indexEndTrimmedRevised = indexEndTrimmed;
+                // 剩余宽度 > 将被替换的宽度
                 if (remainWidth > widthTailReplaced) {
                     int extraOffset = 0;
                     int extraWidth = 0;
+                    String tempText;
                     while (remainWidth > widthTailReplaced + extraWidth) {
                         extraOffset++;
                         if (indexEndTrimmed + extraOffset <= mOrigText.length()) {
-                            extraWidth = (int) (mTextPaint.measureText(
-                                    mOrigText.subSequence(indexEndTrimmed, indexEndTrimmed
-                                            + extraOffset).toString()) + 0.5);
+                            tempText = mOrigText.subSequence(
+                                    indexEndTrimmed,
+                                    indexEndTrimmed + extraOffset).toString();
+                            if (tempText.endsWith("\n")) {
+                                break;
+                            }
+                            extraWidth = (int) (mTextPaint.measureText(tempText) + 0.5);
                         } else {
                             break;
                         }
                     }
+                    // 逐渐增加 被修剪过的文本末端下标
                     indexEndTrimmedRevised += extraOffset - 1;
                 } else {
                     int extraOffset = 0;

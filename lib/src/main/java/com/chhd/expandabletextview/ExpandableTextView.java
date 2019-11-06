@@ -234,11 +234,10 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
                 if (remainWidth > widthTailReplaced) {
                     int extraOffset = 0;
                     int extraWidth = 0;
-                    String tempText;
                     while (remainWidth > widthTailReplaced + extraWidth) {
                         extraOffset++;
                         if (indexEndTrimmed + extraOffset <= mOrigText.length()) {
-                            tempText = mOrigText.subSequence(
+                            String tempText = mOrigText.subSequence(
                                     indexEndTrimmed,
                                     indexEndTrimmed + extraOffset).toString();
                             if (tempText.endsWith("\n")) {
@@ -460,8 +459,9 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
         @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
         @Override
         public void onClick(View widget) {
-            if (hasOnClickListeners() && (getOnClickListener(ExpandableTextView.this)
-                    instanceof ExpandableClickListener)) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1
+                    && hasOnClickListeners()
+                    && (getOnClickListener(ExpandableTextView.this) instanceof ExpandableClickListener)) {
             } else {
                 toggle();
             }

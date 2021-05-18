@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
 import android.text.DynamicLayout;
 import android.text.Layout;
 import android.text.SpannableStringBuilder;
@@ -13,7 +12,9 @@ import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.style.ClickableSpan;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 
 import java.lang.reflect.Field;
 
@@ -44,25 +45,18 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
     private static final boolean SHOW_TO_EXPAND_HINT = true;
     private static final boolean SHOW_TO_SHRINK_HINT = true;
 
-    /** 省略符号 */
-    private String mEllipsisHint;
-    /** 展开文本 */
-    private String mToExpandHint;
-    /** 收起文本 */
-    private String mToShrinkHint;
+    private String mEllipsisHint;                                               // 省略符号
+    private String mToExpandHint;                                               // 展开文本
+    private String mToShrinkHint;                                               // 收起文本
     private Drawable mToExpandIcon;
     private Drawable mToShrinkIcon;
     private int mExpandIconVerticalAlign = AlignImageSpan.ALIGN_CENTER;
     private int mShrinkIconVerticalAlign = AlignImageSpan.ALIGN_CENTER;
-    /** 左侧展开文本的间隔 */
-    private String mGapToExpandHint = GAP_TO_EXPAND_HINT;
-    /** 左侧收起文本的间隔 */
-    private String mGapToShrinkHint = GAP_TO_SHRINK_HINT;
+    private String mGapToExpandHint = GAP_TO_EXPAND_HINT;                       // 左侧展开文本的间隔
+    private String mGapToShrinkHint = GAP_TO_SHRINK_HINT;                       // 左侧收起文本的间隔
     private boolean mToggleEnable = TOGGLE_ENABLE;
-    /** 显示展开文本 */
-    private boolean mShowToExpandHint = SHOW_TO_EXPAND_HINT;
-    /** 显示收起文本 */
-    private boolean mShowToShrinkHint = SHOW_TO_SHRINK_HINT;
+    private boolean mShowToExpandHint = SHOW_TO_EXPAND_HINT;                    // 显示展开文本
+    private boolean mShowToShrinkHint = SHOW_TO_SHRINK_HINT;                    // 显示收起文本
     private int mMaxLinesOnShrink = MAX_LINES_ON_SHRINK;
     private int mToExpandHintColor = TO_EXPAND_HINT_COLOR;
     private int mToShrinkHintColor = TO_SHRINK_HINT_COLOR;
@@ -117,12 +111,6 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
                 TO_EXPAND_HINT_COLOR);
         mToShrinkHintColor = a.getInteger(R.styleable.ExpandableTextView_etv_ToShrinkHintColor,
                 TO_SHRINK_HINT_COLOR);
-//        mToExpandHintColorBgPressed =
-//                a.getInteger(R.styleable.ExpandableTextView_etv_ToExpandHintColorBgPressed,
-//                        TO_EXPAND_HINT_COLOR_BG_PRESSED);
-//        mToShrinkHintColorBgPressed =
-//                a.getInteger(R.styleable.ExpandableTextView_etv_ToShrinkHintColorBgPressed,
-//                        TO_SHRINK_HINT_COLOR_BG_PRESSED);
         mCurrState = a.getInteger(R.styleable.ExpandableTextView_etv_InitState, STATE_SHRINK);
         mGapToExpandHint = a.getString(R.styleable.ExpandableTextView_etv_GapToExpandHint);
         mGapToShrinkHint = a.getString(R.styleable.ExpandableTextView_etv_GapToShrinkHint);
@@ -158,6 +146,18 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
             mExpandableClickListener = new ExpandableClickListener();
             setOnClickListener(mExpandableClickListener);
         }
+        getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                ViewTreeObserver obs = getViewTreeObserver();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    obs.removeOnGlobalLayoutListener(this);
+                } else {
+                    obs.removeGlobalOnLayoutListener(this);
+                }
+                setTextInternal(getNewTextByConfig(), mBufferType);
+            }
+        });
     }
 
     /* ----------------------------- ▼内部方法▼ -----------------------------  */
@@ -187,6 +187,7 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
         mTextPaint = getPaint();
 
         mTextLineCount = -1;
+        Log.i(TAG, "getNewTextByConfig: " + mCurrState);
         switch (mCurrState) {
             case STATE_SHRINK: {
                 mLayout = new DynamicLayout(mOrigText, mTextPaint, mLayoutWidth,
@@ -315,7 +316,7 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
                     ssbExpand.append(" ");
                     mToShrinkIcon.setBounds(0, 0,
                             mToShrinkIcon.getIntrinsicWidth(), mToShrinkIcon.getIntrinsicHeight());
-                    AlignImageSpan sp = new AlignImageSpan(mToExpandIcon, mShrinkIconVerticalAlign);
+                    AlignImageSpan sp = new AlignImageSpan(mToShrinkIcon, mShrinkIconVerticalAlign);
                     ssbExpand.setSpan(sp, ssbExpand.length() - 1, ssbExpand.length(),
                             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
@@ -374,12 +375,6 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
     /* ----------------------------- ▼系统方法▼ -----------------------------  */
 
     @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        setTextInternal(getNewTextByConfig(), mBufferType);
-    }
-
-    @Override
     public void setText(CharSequence text, BufferType type) {
         mOrigText = text;
         mBufferType = type;
@@ -388,13 +383,29 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
 
     /* ----------------------------- ▼对外方法▼ -----------------------------  */
 
-    public int getExpandState() {
-        return mCurrState;
+    public void setText(final CharSequence text, final int currState) {
+        this.mCurrState = currState;
+        this.mOrigText = text;
+        if (getWidth() == 0 || getMeasuredWidth() == 0) {
+            postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    setText(text, currState);
+                }
+            }, 50);
+        } else {
+            setText(getNewTextByConfig());
+        }
+        this.mOrigText = text;
     }
 
     public void setExpandState(int currState) {
         this.mCurrState = currState;
         setTextInternal(getNewTextByConfig(), mBufferType);
+    }
+
+    public int getExpandState() {
+        return mCurrState;
     }
 
     /* ----------------------------- ▼内部类▼ -----------------------------  */
@@ -456,7 +467,6 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
 
     private class TouchableSpan extends ClickableSpan {
 
-        @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
         @Override
         public void onClick(View widget) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1

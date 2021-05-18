@@ -7,24 +7,27 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <com.chhd.expandabletextview.ExpandableTextView
-        android:id="@+id/etv"
+    <RelativeLayout
+        android:id="@+id/top"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:gravity="center_vertical"
-        android:text="@string/text" />
+        android:background="@android:color/holo_orange_light">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp" />
+        <com.chhd.expandabletextview.ExpandableTextView
+            android:id="@+id/tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:lineSpacingExtra="4dp"
+            android:padding="10dp"
+            android:text="@string/text"
+            app:etv_ToExpandIcon="@mipmap/ic_expand"
+            app:etv_ToShrinkIcon="@mipmap/ic_shrink" />
+    </RelativeLayout>
 
-    <TextView
-        android:id="@+id/tv"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center_vertical"
-        android:maxLines="2"
-        android:text="@string/text" />
+        android:layout_weight="1" />
 </LinearLayout>

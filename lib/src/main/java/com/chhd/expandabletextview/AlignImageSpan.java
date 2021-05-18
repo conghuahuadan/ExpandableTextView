@@ -32,6 +32,9 @@ class AlignImageSpan extends ImageSpan {
     @Override
     public int getSize(Paint paint, CharSequence text, int start, int end, Paint.FontMetricsInt fm) {
         Drawable d = getCachedDrawable();
+        if (d == null) {
+            return 0;
+        }
         Rect rect = d.getBounds();
         if (fm != null) {
             Paint.FontMetrics fmPaint = paint.getFontMetrics();
@@ -90,6 +93,9 @@ class AlignImageSpan extends ImageSpan {
                      float x, int top, int y, int bottom,
                      Paint paint) {
         Drawable drawable = getDrawable();
+        if (drawable == null) {
+            return;
+        }
         Rect rect = drawable.getBounds();
         float transY;
         switch (mVerticalAlignment) {

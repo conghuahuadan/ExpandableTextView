@@ -1,5 +1,5 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.novoda.bintray-release'
+//apply plugin: 'com.novoda.bintray-release'
 
 android {
     compileSdkVersion 28
@@ -23,11 +23,19 @@ dependencies {
     compileOnly 'com.android.support:appcompat-v7:28.0.0'
 }
 
-publish {
-    userOrg = 'conghuahuadan'
-    groupId = 'com.conghuahuadan'
-    artifactId = 'expandabletextview'
-    publishVersion = '1.0.1'
-    desc = 'expandabletextview'
-    website = ''
+//publish {
+//    userOrg = 'conghuahuadan'
+//    groupId = 'com.conghuahuadan'
+//    artifactId = 'expandabletextview'
+//    publishVersion = '1.0.1'
+//    desc = 'expandabletextview'
+//    website = ''
+//}
+
+ext {
+    PUBLISH_GROUP_ID = "io.github.conghuahuadan"      // 项目包名
+    PUBLISH_ARTIFACT_ID = 'expandabletextview'      // 项目名
+    PUBLISH_VERSION = '1.0.1'                   // 版本号
 }
+
+apply from: "${rootProject.projectDir}/publish-mavencentral.gradle"

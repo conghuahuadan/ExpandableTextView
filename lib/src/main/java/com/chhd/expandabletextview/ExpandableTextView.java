@@ -20,7 +20,7 @@ import java.lang.reflect.Field;
 
 /**
  * 改自 Carbs0126 / ExpandableTextView
- *
+ * <p>
  * · 新增展开图标、收起图标的属性
  * · 支持“\n”
  *
@@ -33,47 +33,47 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
     public static final int STATE_SHRINK = 0;
     public static final int STATE_EXPAND = 1;
 
-    private static final String CLASS_NAME_VIEW = "android.view.View";
-    private static final String CLASS_NAME_LISTENER_INFO = "android.view.View$ListenerInfo";
-    private static final String ELLIPSIS_HINT = "..";
-    private static final String GAP_TO_EXPAND_HINT = " ";
-    private static final String GAP_TO_SHRINK_HINT = " ";
-    private static final int MAX_LINES_ON_SHRINK = 2;
-    private static final int TO_EXPAND_HINT_COLOR = 0xFF3498DB;
-    private static final int TO_SHRINK_HINT_COLOR = 0xFFE74C3C;
-    private static final boolean TOGGLE_ENABLE = true;
-    private static final boolean SHOW_TO_EXPAND_HINT = true;
-    private static final boolean SHOW_TO_SHRINK_HINT = true;
+    static final String CLASS_NAME_VIEW = "android.view.View";
+    static final String CLASS_NAME_LISTENER_INFO = "android.view.View$ListenerInfo";
+    static final String ELLIPSIS_HINT = "...";
+    static final String GAP_TO_EXPAND_HINT = " ";
+    static final String GAP_TO_SHRINK_HINT = " ";
+    static final int MAX_LINES_ON_SHRINK = 2;
+    static final int TO_EXPAND_HINT_COLOR = 0xFF3498DB;
+    static final int TO_SHRINK_HINT_COLOR = 0xFFE74C3C;
+    static final boolean TOGGLE_ENABLE = true;
+    static final boolean SHOW_TO_EXPAND_HINT = true;
+    static final boolean SHOW_TO_SHRINK_HINT = true;
 
-    private String mEllipsisHint;                                               // 省略符号
-    private String mToExpandHint;                                               // 展开文本
-    private String mToShrinkHint;                                               // 收起文本
-    private Drawable mToExpandIcon;
-    private Drawable mToShrinkIcon;
-    private int mExpandIconVerticalAlign = AlignImageSpan.ALIGN_CENTER;
-    private int mShrinkIconVerticalAlign = AlignImageSpan.ALIGN_CENTER;
-    private String mGapToExpandHint = GAP_TO_EXPAND_HINT;                       // 左侧展开文本的间隔
-    private String mGapToShrinkHint = GAP_TO_SHRINK_HINT;                       // 左侧收起文本的间隔
-    private boolean mToggleEnable = TOGGLE_ENABLE;
-    private boolean mShowToExpandHint = SHOW_TO_EXPAND_HINT;                    // 显示展开文本
-    private boolean mShowToShrinkHint = SHOW_TO_SHRINK_HINT;                    // 显示收起文本
-    private int mMaxLinesOnShrink = MAX_LINES_ON_SHRINK;
-    private int mToExpandHintColor = TO_EXPAND_HINT_COLOR;
-    private int mToShrinkHintColor = TO_SHRINK_HINT_COLOR;
-    private int mCurrState = STATE_SHRINK;
+    String mEllipsisHint;                                               // 省略符号
+    String mToExpandHint;                                               // 展开文本
+    String mToShrinkHint;                                               // 收起文本
+    Drawable mToExpandIcon;
+    Drawable mToShrinkIcon;
+    int mExpandIconVerticalAlign = AlignImageSpan.ALIGN_CENTER;
+    int mShrinkIconVerticalAlign = AlignImageSpan.ALIGN_CENTER;
+    String mGapToExpandHint = GAP_TO_EXPAND_HINT;                       // 左侧展开文本的间隔
+    String mGapToShrinkHint = GAP_TO_SHRINK_HINT;                       // 左侧收起文本的间隔
+    boolean mToggleEnable = TOGGLE_ENABLE;
+    boolean mShowToExpandHint = SHOW_TO_EXPAND_HINT;                    // 显示展开文本
+    boolean mShowToShrinkHint = SHOW_TO_SHRINK_HINT;                    // 显示收起文本
+    int mMaxLinesOnShrink = MAX_LINES_ON_SHRINK;
+    int mToExpandHintColor = TO_EXPAND_HINT_COLOR;
+    int mToShrinkHintColor = TO_SHRINK_HINT_COLOR;
+    int mCurrState = STATE_SHRINK;
 
-    private TouchableSpan mTouchableSpan;
-    private BufferType mBufferType = BufferType.NORMAL;
-    private TextPaint mTextPaint;
-    private Layout mLayout;
-    private int mTextLineCount = -1;
-    private int mLayoutWidth = 0;
-    private int mFutureTextViewWidth = 0;
+    TouchableSpan mTouchableSpan;
+    BufferType mBufferType = BufferType.NORMAL;
+    TextPaint mTextPaint;
+    Layout mLayout;
+    int mTextLineCount = -1;
+    int mLayoutWidth = 0;
+    int mFutureTextViewWidth = 0;
 
-    private CharSequence mOrigText;
+    CharSequence mOrigText;
 
-    private ExpandableClickListener mExpandableClickListener;
-    private OnExpandListener mOnExpandListener;
+    ExpandableClickListener mExpandableClickListener;
+    OnExpandListener mOnExpandListener;
 
     public ExpandableTextView(Context context) {
         super(context);
@@ -218,13 +218,10 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
 
                 // 将被替换的宽度
                 float widthTailReplaced;
-                if (mToExpandIcon == null) {
-                    widthTailReplaced = mTextPaint.measureText(getContentOfString(mEllipsisHint)
-                            + (mShowToExpandHint ? (getContentOfString(mToExpandHint)
-                            + getContentOfString(mGapToExpandHint)) : ""));
-                } else {
-                    widthTailReplaced = mTextPaint.measureText(getContentOfString(mEllipsisHint)
-                            + (mShowToExpandHint ? (getContentOfString(mGapToExpandHint)) : ""));
+                widthTailReplaced = mTextPaint.measureText(getContentOfString(mEllipsisHint)
+                        + (mShowToExpandHint ? (getContentOfString(mToExpandHint)
+                        + getContentOfString(mGapToExpandHint)) : ""));
+                if (mToExpandIcon != null) {
                     mToExpandIcon.setBounds(0, 0,
                             mToExpandIcon.getIntrinsicWidth(), mToExpandIcon.getIntrinsicHeight());
                     widthTailReplaced = widthTailReplaced + mToExpandIcon.getIntrinsicWidth();
@@ -272,21 +269,18 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
                 SpannableStringBuilder ssbShrink = new SpannableStringBuilder(fixText)
                         .append(mEllipsisHint);
                 if (mShowToExpandHint) {
-                    if (mToExpandIcon == null) {
-                        ssbShrink.append(getContentOfString(mGapToExpandHint)
-                                + getContentOfString(mToExpandHint));
-                        ssbShrink.setSpan(mTouchableSpan, ssbShrink.length()
-                                        - getLengthOfString(mToExpandHint), ssbShrink.length(),
-                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    } else {
-                        ssbShrink.append(getContentOfString(mGapToExpandHint));
+                    ssbShrink.append(getContentOfString(mGapToExpandHint)
+                            + getContentOfString(mToExpandHint));
+                    ssbShrink.setSpan(mTouchableSpan, ssbShrink.length()
+                                    - getLengthOfString(mToExpandHint), ssbShrink.length(),
+                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    if (mToExpandIcon != null) {
                         ssbShrink.append(" ");
                         AlignImageSpan sp = new AlignImageSpan(mToExpandIcon,
                                 mExpandIconVerticalAlign);
                         ssbShrink.setSpan(sp, ssbShrink.length() - 1, ssbShrink.length(),
                                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
-
                 }
                 return ssbShrink;
             }
@@ -304,15 +298,12 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
                 }
 
                 SpannableStringBuilder ssbExpand;
-                if (mToShrinkIcon == null) {
-                    ssbExpand = new SpannableStringBuilder(mOrigText)
-                            .append(mGapToShrinkHint).append(mToShrinkHint);
-                    ssbExpand.setSpan(mTouchableSpan, ssbExpand.length() -
-                                    getLengthOfString(mToShrinkHint), ssbExpand.length(),
-                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                } else {
-                    ssbExpand = new SpannableStringBuilder(mOrigText)
-                            .append(mGapToShrinkHint);
+                ssbExpand = new SpannableStringBuilder(mOrigText)
+                        .append(mGapToShrinkHint).append(mToShrinkHint);
+                ssbExpand.setSpan(mTouchableSpan, ssbExpand.length() -
+                                getLengthOfString(mToShrinkHint), ssbExpand.length(),
+                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                if (mToShrinkIcon != null) {
                     ssbExpand.append(" ");
                     mToShrinkIcon.setBounds(0, 0,
                             mToShrinkIcon.getIntrinsicWidth(), mToShrinkIcon.getIntrinsicHeight());
@@ -330,20 +321,29 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
         return mLayout != null ? mLayout : getLayout();
     }
 
-    private void toggle() {
+    public void toggle() {
         switch (mCurrState) {
             case STATE_SHRINK:
-                mCurrState = STATE_EXPAND;
-                if (mOnExpandListener != null) {
-                    mOnExpandListener.onExpand(this);
-                }
+                expand();
                 break;
             case STATE_EXPAND:
-                mCurrState = STATE_SHRINK;
-                if (mOnExpandListener != null) {
-                    mOnExpandListener.onShrink(this);
-                }
+                shrink();
                 break;
+        }
+    }
+
+    public void expand() {
+        mCurrState = STATE_EXPAND;
+        if (mOnExpandListener != null) {
+            mOnExpandListener.onExpand(this);
+        }
+        setTextInternal(getNewTextByConfig(), mBufferType);
+    }
+
+    public void shrink() {
+        mCurrState = STATE_SHRINK;
+        if (mOnExpandListener != null) {
+            mOnExpandListener.onShrink(this);
         }
         setTextInternal(getNewTextByConfig(), mBufferType);
     }

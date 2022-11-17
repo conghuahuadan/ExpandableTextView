@@ -21,7 +21,12 @@
             android:lineSpacingExtra="4dp"
             android:padding="10dp"
             android:text="@string/text"
+            app:etv_EllipsisHint="..."
+            app:etv_ToExpandHint="展开 "
+            app:etv_ToExpandHintColor="@android:color/holo_red_light"
             app:etv_ToExpandIcon="@mipmap/ic_expand"
+            app:etv_ToShrinkHint="收起 "
+            app:etv_ToShrinkHintColor="@android:color/holo_blue_light"
             app:etv_ToShrinkIcon="@mipmap/ic_shrink" />
     </RelativeLayout>
 

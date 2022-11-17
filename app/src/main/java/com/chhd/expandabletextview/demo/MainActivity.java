@@ -1,6 +1,5 @@
 package com.chhd.expandabletextview.demo;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -26,8 +25,20 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.top).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplication(), MainActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent(getApplication(), MainActivity.class);
+//                startActivity(intent);
+            }
+        });
+
+        final ExpandableTextView tv = findViewById(R.id.tv);
+        tv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (tv.getExpandState() == ExpandableTextView.STATE_SHRINK) {
+                    tv.expand();
+                } else {
+                    tv.shrink();
+                }
             }
         });
 

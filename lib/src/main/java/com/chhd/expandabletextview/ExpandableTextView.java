@@ -130,12 +130,12 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
         if (TextUtils.isEmpty(mEllipsisHint)) {
             mEllipsisHint = ELLIPSIS_HINT;
         }
-        if (TextUtils.isEmpty(mToExpandHint)) {
-            mToExpandHint = getResources().getString(R.string.to_expand_hint);
-        }
-        if (TextUtils.isEmpty(mToShrinkHint)) {
-            mToShrinkHint = getResources().getString(R.string.to_shrink_hint);
-        }
+//        if (TextUtils.isEmpty(mToExpandHint)) {
+//            mToExpandHint = getResources().getString(R.string.to_expand_hint);
+//        }
+//        if (TextUtils.isEmpty(mToShrinkHint)) {
+//            mToShrinkHint = getResources().getString(R.string.to_shrink_hint);
+//        }
         if (mGapToExpandHint == null) {
             mGapToExpandHint = GAP_TO_EXPAND_HINT;
         }
@@ -218,9 +218,13 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
 
                 // 将被替换的宽度
                 float widthTailReplaced;
-                widthTailReplaced = mTextPaint.measureText(getContentOfString(mEllipsisHint)
-                        + (mShowToExpandHint ? (getContentOfString(mToExpandHint)
-                        + getContentOfString(mGapToExpandHint)) : ""));
+                if (TextUtils.isEmpty(mToExpandHint)) {
+                    widthTailReplaced = mTextPaint.measureText(getContentOfString(mEllipsisHint));
+                } else {
+                    widthTailReplaced = mTextPaint.measureText(getContentOfString(mEllipsisHint)
+                            + (mShowToExpandHint ? (getContentOfString(mToExpandHint)
+                            + getContentOfString(mGapToExpandHint)) : ""));
+                }
                 if (mToExpandIcon != null) {
                     mToExpandIcon.setBounds(0, 0,
                             mToExpandIcon.getIntrinsicWidth(), mToExpandIcon.getIntrinsicHeight());
@@ -269,11 +273,15 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
                 SpannableStringBuilder ssbShrink = new SpannableStringBuilder(fixText)
                         .append(mEllipsisHint);
                 if (mShowToExpandHint) {
-                    ssbShrink.append(getContentOfString(mGapToExpandHint)
-                            + getContentOfString(mToExpandHint));
-                    ssbShrink.setSpan(mTouchableSpan, ssbShrink.length()
-                                    - getLengthOfString(mToExpandHint), ssbShrink.length(),
-                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    if (TextUtils.isEmpty(mToExpandHint)) {
+
+                    } else {
+                        ssbShrink.append(getContentOfString(mGapToExpandHint)
+                                + getContentOfString(mToExpandHint));
+                        ssbShrink.setSpan(mTouchableSpan, ssbShrink.length()
+                                        - getLengthOfString(mToExpandHint), ssbShrink.length(),
+                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }
                     if (mToExpandIcon != null) {
                         ssbShrink.append(" ");
                         AlignImageSpan sp = new AlignImageSpan(mToExpandIcon,
@@ -297,12 +305,15 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
                     return mOrigText;
                 }
 
-                SpannableStringBuilder ssbExpand;
-                ssbExpand = new SpannableStringBuilder(mOrigText)
-                        .append(mGapToShrinkHint).append(mToShrinkHint);
-                ssbExpand.setSpan(mTouchableSpan, ssbExpand.length() -
-                                getLengthOfString(mToShrinkHint), ssbExpand.length(),
-                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                SpannableStringBuilder ssbExpand = new SpannableStringBuilder(mOrigText);
+                if (TextUtils.isEmpty(mToShrinkHint)) {
+
+                } else {
+                    ssbExpand.append(mGapToShrinkHint).append(mToShrinkHint);
+                    ssbExpand.setSpan(mTouchableSpan, ssbExpand.length() -
+                                    getLengthOfString(mToShrinkHint), ssbExpand.length(),
+                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
                 if (mToShrinkIcon != null) {
                     ssbExpand.append(" ");
                     mToShrinkIcon.setBounds(0, 0,

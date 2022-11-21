@@ -11,24 +11,29 @@
         android:id="@+id/top"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_weight="0.3"
         android:background="@android:color/holo_orange_light">
 
         <com.chhd.expandabletextview.ExpandableTextView
             android:id="@+id/tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="80dp"
+            android:layout_marginRight="20dp"
+            android:background="#fefefe"
             android:lineSpacingExtra="4dp"
             android:padding="10dp"
             android:text="@string/text"
+            android:textSize="14sp"
             app:etv_EllipsisHint="..."
-            app:etv_MaxLinesOnShrink="2"
+            app:etv_EnableToggle="false"
             app:etv_GapToExpandHint=" "
+            app:etv_MaxLinesOnShrink="2"
+            app:etv_ToExpandHint="展开"
             app:etv_ToExpandHintColor="@android:color/holo_red_light"
+            app:etv_ToShrinkHint="\n收起"
             app:etv_ToShrinkHintColor="@android:color/holo_blue_light"
-            tools:etv_ToExpandHint="展开"
             tools:etv_ToExpandIcon="@mipmap/ic_expand"
-            tools:etv_ToShrinkHint="收起"
             tools:etv_ToShrinkIcon="@mipmap/ic_shrink" />
     </RelativeLayout>
 

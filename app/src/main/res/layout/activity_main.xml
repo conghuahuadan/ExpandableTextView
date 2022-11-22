@@ -7,23 +7,25 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/top"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.3"
-        android:background="@android:color/holo_orange_light">
+        android:layout_weight="1"
+        android:background="@android:color/holo_orange_light"
+        android:orientation="vertical"
+        android:paddingLeft="80dp"
+        android:paddingRight="20dp">
 
         <com.chhd.expandabletextview.ExpandableTextView
-            android:id="@+id/tv"
+            android:id="@+id/etv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="80dp"
-            android:layout_marginRight="20dp"
             android:background="#fefefe"
             android:lineSpacingExtra="4dp"
             android:padding="10dp"
             android:text="@string/text"
+            android:textColor="@android:color/holo_purple"
             android:textSize="14sp"
             app:etv_EllipsisHint="..."
             app:etv_EnableToggle="false"
@@ -33,13 +35,55 @@
             app:etv_ToExpandHintColor="@android:color/holo_red_light"
             app:etv_ToShrinkHint="\n收起"
             app:etv_ToShrinkHintColor="@android:color/holo_blue_light"
+            tools:etv_ToEllipsisHintColor="@android:color/holo_orange_light"
             tools:etv_ToExpandIcon="@mipmap/ic_expand"
-            tools:etv_ToShrinkIcon="@mipmap/ic_shrink" />
-    </RelativeLayout>
+            tools:etv_ToShrinkIcon="@mipmap/ic_shrink"
+            tools:ignore="SpeakableTextPresentCheck" />
+
+        <TextView
+            android:id="@+id/tv_primitive"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="#fefefe"
+            android:lineSpacingExtra="4dp"
+            android:padding="0dp"
+            android:text="@string/text"
+            android:textSize="14sp">
+
+        </TextView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onBtn1Click"
+                android:text="btn1" />
+
+            <Button
+                android:id="@+id/btn2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onBtn2Click"
+                android:text="btn2" />
+
+            <Button
+                android:id="@+id/btn3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onBtn3Click"
+                android:text="btn3" />
+        </LinearLayout>
+    </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="0" />
 </LinearLayout>

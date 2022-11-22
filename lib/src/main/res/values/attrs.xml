@@ -19,6 +19,8 @@
         <attr name="etv_ToExpandHintShow" format="reference|boolean" />
         <!-- 显示收起提示内容 -->
         <attr name="etv_ToShrinkHintShow" format="reference|boolean" />
+        <!-- 省略号提示颜色 -->
+        <attr name="etv_ToEllipsisHintColor" format="reference|color" />
         <!-- 展开提示颜色 -->
         <attr name="etv_ToExpandHintColor" format="reference|color" />
         <!-- 收起提示颜色 -->

@@ -14,6 +14,7 @@ import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -42,6 +43,7 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
     static final String GAP_TO_EXPAND_HINT = " ";
     static final String GAP_TO_SHRINK_HINT = " ";
     static final int MAX_LINES_ON_SHRINK = 2;
+    static final int TO_ELLIPSIS_HINT_COLOR = -1;
     static final int TO_EXPAND_HINT_COLOR = 0xFF3498DB;
     static final int TO_SHRINK_HINT_COLOR = 0xFFE74C3C;
     static final boolean TOGGLE_ENABLE = true;
@@ -61,6 +63,7 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
     protected boolean mShowToExpandHint = SHOW_TO_EXPAND_HINT;                    // 显示展开文本
     protected boolean mShowToShrinkHint = SHOW_TO_SHRINK_HINT;                    // 显示收起文本
     protected int mMaxLinesOnShrink = MAX_LINES_ON_SHRINK;
+    protected int mToEllipsisHintColor = TO_ELLIPSIS_HINT_COLOR;
     protected int mToExpandHintColor = TO_EXPAND_HINT_COLOR;
     protected int mToShrinkHintColor = TO_SHRINK_HINT_COLOR;
     protected int mCurrState = STATE_SHRINK;
@@ -111,6 +114,8 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
                 SHOW_TO_EXPAND_HINT);
         mShowToShrinkHint = a.getBoolean(R.styleable.ExpandableTextView_etv_ToShrinkHintShow,
                 SHOW_TO_SHRINK_HINT);
+        mToEllipsisHintColor = a.getInteger(R.styleable.ExpandableTextView_etv_ToEllipsisHintColor,
+                mToEllipsisHintColor);
         mToExpandHintColor = a.getInteger(R.styleable.ExpandableTextView_etv_ToExpandHintColor,
                 TO_EXPAND_HINT_COLOR);
         mToShrinkHintColor = a.getInteger(R.styleable.ExpandableTextView_etv_ToShrinkHintColor,
@@ -242,24 +247,29 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
                 int indexEndTrimmedRevised = indexEndTrimmed;
                 // 剩余宽度 > 将被替换的宽度
                 if (remainWidth > widthTailReplaced) {
-                    int extraOffset = 0;
-                    int extraWidth = 0;
-                    while (remainWidth > widthTailReplaced + extraWidth) {
-                        extraOffset++;
-                        if (indexEndTrimmed + extraOffset <= mOrigText.length()) {
-                            String tempText = mOrigText.subSequence(
-                                    indexEndTrimmed,
-                                    indexEndTrimmed + extraOffset).toString();
-                            if (tempText.endsWith("\n")) {
+                    String endStr = mOrigText.subSequence(indexEndTrimmed - 1, indexEndTrimmed).toString();
+                    if ("\n".endsWith(endStr)) {
+
+                    } else { // 应用场景？感觉可以注释
+                        int extraOffset = 0;
+                        int extraWidth = 0;
+                        while (remainWidth > widthTailReplaced + extraWidth) {
+                            extraOffset++;
+                            if (indexEndTrimmed + extraOffset <= mOrigText.length()) {
+                                String tempText = mOrigText.subSequence(
+                                        indexEndTrimmed,
+                                        indexEndTrimmed + extraOffset).toString();
+                                if (tempText.endsWith("\n")) {
+                                    break;
+                                }
+                                extraWidth = (int) (mTextPaint.measureText(tempText) + 0.5);
+                            } else {
                                 break;
                             }
-                            extraWidth = (int) (mTextPaint.measureText(tempText) + 0.5);
-                        } else {
-                            break;
                         }
+                        // 逐渐增加 被修剪过的文本末端下标
+                        indexEndTrimmedRevised += extraOffset - 1;
                     }
-                    // 逐渐增加 被修剪过的文本末端下标
-                    indexEndTrimmedRevised += extraOffset - 1;
                 } else {
                     int extraOffset = 0;
                     int extraWidth = 0;
@@ -280,6 +290,10 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
                         indexEndTrimmedRevised));
                 SpannableStringBuilder ssbShrink = new SpannableStringBuilder(fixText)
                         .append(mEllipsisHint);
+                if (mToEllipsisHintColor != -1) {
+                    ssbShrink.setSpan(new ForegroundColorSpan(mToEllipsisHintColor), ssbShrink.length()
+                            - getLengthOfString(mEllipsisHint), ssbShrink.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
                 if (mShowToExpandHint) {
                     if (TextUtils.isEmpty(mToExpandHint)) {
 
@@ -297,7 +311,7 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
 //                                          }, 0, ssbShrink.length()
 //                                        - getLengthOfString(mToExpandHint) - 1,
 //                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                        ssbShrink.setSpan(new TouchableSpan(mToShrinkHintColor) {
+                        ssbShrink.setSpan(new TouchableSpan(mToExpandHintColor) {
                                               @Override
                                               public void onClick(View widget) {
                                                   super.onClick(widget);
@@ -349,7 +363,7 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
 //                                      }, 0, ssbExpand.length()
 //                                    - getLengthOfString(mToShrinkHint) - 1,
 //                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    ssbExpand.setSpan(new TouchableSpan(mToExpandHintColor) {
+                    ssbExpand.setSpan(new TouchableSpan(mToShrinkHintColor) {
                                           @Override
                                           public void onClick(View widget) {
                                               super.onClick(widget);
@@ -503,6 +517,21 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
     }
 
     /* ----------------------------- ▼对外方法▼ -----------------------------  */
+
+    public void setEllipsisHintColor(int color) {
+        mToEllipsisHintColor = color;
+        setText(mOrigText, getExpandState());
+    }
+
+    public void setExpandHintColor(int color) {
+        mToExpandHintColor = color;
+        setText(mOrigText, getExpandState());
+    }
+
+    public void setShrinkHintColor(int color) {
+        mToShrinkHintColor = color;
+        setText(mOrigText, getExpandState());
+    }
 
     public void setText(final CharSequence text, final int currState) {
         this.mCurrState = currState;

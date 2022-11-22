@@ -6,6 +6,8 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.DynamicLayout;
+import android.text.Layout;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
@@ -22,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
 
     private final String TAG = this.getClass().getSimpleName();
     private SparseArray<Integer> etvStatus = new SparseArray<>();
+    private ExpandableTextView etv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,29 +39,32 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        final ExpandableTextView tv = findViewById(R.id.tv);
+        etv = findViewById(R.id.etv);
 
         String text = "花旗：英国秋季报告或减轻抵押贷款利率上升压力\n花旗分析师在一份报告中表示英国政府在周四的秋季报告中宣布的支出削减和增税计划“旨在降低抵押贷款利率”。分析人士称，英国财政大臣亨特的计划(包括增税和削减支出约550亿英镑)减轻了利率上升的压力，这意味着抵押贷款利率上升的压力将会更小。";
+//        String text = "花旗：英国秋季报告或减轻抵押贷款利率\n上升压力\n花旗分析师在一份报告中表示英国政府在周四的秋季报告中宣布的支出削减和增税计划“旨在降低抵押贷款利率”。分析人士称，英国财政大臣亨特的计划(包括增税和削减支出约550亿英镑)减轻了利率上升的压力，这意味着抵押贷款利率上升的压力将会更小。";
 //        SpannableStringBuilder ssb = new SpannableStringBuilder();
 //        ssb.append(text);
 //        ssb.setSpan(new ForegroundColorSpan(Color.GREEN), 0, 4, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        tv.setText(text, ExpandableTextView.STATE_SHRINK);
-//        tv.setOnChildClickListener(new ExpandableTextView.OnChildClickListener() {
-//            @Override
-//            public void onContentClick(ExpandableTextView view, int state) {
-//                Log.i(TAG, "onContentClick: " + view);
-//            }
-//
-//            @Override
-//            public void onExpandClick(ExpandableTextView view, int state) {
-//                Log.i(TAG, "onExpandClick: ");
-//            }
-//
-//            @Override
-//            public void onShrinkClick(ExpandableTextView view, int state) {
-//                Log.i(TAG, "onShrinkClick: ");
-//            }
-//        });
+        etv.setText(text, ExpandableTextView.STATE_SHRINK);
+        etv.setOnChildClickListener(new ExpandableTextView.OnChildClickListener() {
+            @Override
+            public void onContentClick(ExpandableTextView view, int state) {
+                Log.i(TAG, "onContentClick: " + view);
+            }
+
+            @Override
+            public void onExpandClick(ExpandableTextView view, int state) {
+                Log.i(TAG, "onExpandClick: ");
+                view.expand();
+            }
+
+            @Override
+            public void onShrinkClick(ExpandableTextView view, int state) {
+                Log.i(TAG, "onShrinkClick: ");
+                view.shrink();
+            }
+        });
 //        tv.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
@@ -79,6 +85,31 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView rv = findViewById(R.id.rv);
         rv.setLayoutManager(new LinearLayoutManager(this));
         rv.setAdapter(new Adapter());
+
+        final TextView tvPrimitive = findViewById(R.id.tv_primitive);
+        tvPrimitive.setText(text);
+        tvPrimitive.post(new Runnable() {
+            @Override
+            public void run() {
+                DynamicLayout mLayout = new DynamicLayout(tvPrimitive.getText(), tvPrimitive.getPaint(), tvPrimitive.getWidth(),
+                        Layout.Alignment.ALIGN_NORMAL,
+                        tvPrimitive.getLineSpacingMultiplier(), tvPrimitive.getLineSpacingExtra(), tvPrimitive.getIncludeFontPadding());
+
+                Log.i(TAG, "onCreate 2: " + tvPrimitive.getLineCount() + ", " + mLayout.getLineCount() + ", " + tvPrimitive.getHeight() + ", " + mLayout.getHeight());
+            }
+        });
+    }
+
+    public void onBtn1Click(View v) {
+        etv.setEllipsisHintColor(Color.GREEN);
+    }
+
+    public void onBtn2Click(View v) {
+        etv.setExpandHintColor(Color.RED);
+    }
+
+    public void onBtn3Click(View v) {
+        etv.setShrinkHintColor(Color.BLUE);
     }
 
     public class Adapter extends RecyclerView.Adapter<Adapter.Holder> {

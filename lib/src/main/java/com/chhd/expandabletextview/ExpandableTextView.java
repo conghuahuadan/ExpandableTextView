@@ -199,7 +199,7 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
         mTextPaint = getPaint();
 
         mTextLineCount = -1;
-        Log.i(TAG, "getNewTextByConfig: " + mCurrState);
+//        Log.i(TAG, "getNewTextByConfig: " + mCurrState);
         switch (mCurrState) {
             case STATE_SHRINK: {
                 mLayout = new DynamicLayout(mOrigText, mTextPaint, mLayoutWidth,

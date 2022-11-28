@@ -6,6 +6,7 @@ import android.text.DynamicLayout;
 import android.text.Layout;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import com.chhd.expandabletextview.ExpandableTextView;
@@ -33,6 +34,7 @@ public class MyETV extends ExpandableTextView {
     public void setTvHeader(TextView tvHeader, int tvHeaderWidth) {
         this.tvHeader = tvHeader;
         this.tvHeaderWidth = tvHeaderWidth;
+        Log.i(TAG, "setTvHeader: " + tvHeaderWidth);
     }
 
     @Override
@@ -49,7 +51,7 @@ public class MyETV extends ExpandableTextView {
         this.mOrigText = text;
         this.mFutureTextViewWidth = viewWidth;
 
-        if ((viewWidth <= 0 && (getWidth() == 0 || getMeasuredWidth() == 0)) || (tvHeaderWidth <= 0 && tvHeader != null && tvHeader.getWidth() == 0)) {
+        if ((viewWidth <= 0 && (getWidth() == 0 || getMeasuredWidth() == 0)) || (tvHeaderWidth <= 0 && tvHeader != null && tvHeader.getWidth() == 0 && tvHeader.getVisibility() == View.VISIBLE)) {
             postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -58,7 +60,7 @@ public class MyETV extends ExpandableTextView {
             }, 5);
         } else {
             int line = initMaxLines;
-            if (tvHeader != null && (tvHeaderWidth > 0 || tvHeader.getWidth() > 0)) {
+            if (tvHeader != null && (tvHeaderWidth > 0 || tvHeader.getWidth() > 0) && tvHeader.getVisibility() == View.VISIBLE) {
                 DynamicLayout mLayout = new DynamicLayout(tvHeader.getText(),
                         tvHeader.getPaint(), tvHeaderWidth > 0 ? tvHeaderWidth : tvHeader.getWidth(),
                         Layout.Alignment.ALIGN_NORMAL, tvHeader.getLineSpacingMultiplier(),
@@ -67,7 +69,7 @@ public class MyETV extends ExpandableTextView {
             }
             line = line <= 0 ? 1 : line;
             this.mMaxLinesOnShrink = line;
-            Log.i(TAG, "setText: " + tvHeaderWidth + ", " + mMaxLinesOnShrink);
+            Log.i(TAG, "setText: " + tvHeaderWidth + ", " + mMaxLinesOnShrink + ", " + getWidth() + ", " + viewWidth);
             setText(getNewTextByConfig());
         }
     }

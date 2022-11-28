@@ -156,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
             Integer status = etvStatus.get(holder.getLayoutPosition());
             status = status == null ? ExpandableTextView.STATE_SHRINK : status;
             etv.setTvHeader(tvTitle, titleWidth);
-            etv.setText(getString(R.string.text), status, etvWidth);
+            etv.setText(holder.getAdapterPosition() + ", " + getString(R.string.text), status, etvWidth);
             etv.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {

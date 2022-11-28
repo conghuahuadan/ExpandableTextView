@@ -42,7 +42,7 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
     static final String ELLIPSIS_HINT = "...";
     static final String GAP_TO_EXPAND_HINT = " ";
     static final String GAP_TO_SHRINK_HINT = " ";
-    static final int MAX_LINES_ON_SHRINK = 2;
+    static final int MAX_LINES_ON_SHRINK = 7;
     static final int TO_ELLIPSIS_HINT_COLOR = -1;
     static final int TO_EXPAND_HINT_COLOR = 0xFF3498DB;
     static final int TO_SHRINK_HINT_COLOR = 0xFFE74C3C;
@@ -161,7 +161,7 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
                 } else {
                     obs.removeGlobalOnLayoutListener(this);
                 }
-                setTextInternal(getNewTextByConfig(), mBufferType);
+//                setTextInternal(getNewTextByConfig(), mBufferType);
             }
         });
 
@@ -174,7 +174,7 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
 
     /* ----------------------------- ▼内部方法▼ -----------------------------  */
 
-    private CharSequence getNewTextByConfig() {
+    public CharSequence getNewTextByConfig() {
         if (TextUtils.isEmpty(mOrigText)) {
             return mOrigText;
         }
@@ -300,17 +300,6 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
                     } else {
                         ssbShrink.append(getContentOfString(mGapToExpandHint)
                                 + getContentOfString(mToExpandHint));
-//                        ssbShrink.setSpan(new TouchableSpan() {
-//                                              @Override
-//                                              public void onClick(View widget) {
-//                                                  super.onClick(widget);
-//                                                  if (!mIsLongClickTrigger && mOnChildClickListener != null) {
-//                                                      mOnChildClickListener.onContentClick(ExpandableTextView.this, mCurrState);
-//                                                  }
-//                                              }
-//                                          }, 0, ssbShrink.length()
-//                                        - getLengthOfString(mToExpandHint) - 1,
-//                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                         ssbShrink.setSpan(new TouchableSpan(mToExpandHintColor) {
                                               @Override
                                               public void onClick(View widget) {
@@ -352,17 +341,6 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
 
                 } else {
                     ssbExpand.append(mGapToShrinkHint).append(mToShrinkHint);
-//                    ssbExpand.setSpan(new TouchableSpan(getTextColors().getDefaultColor()) {
-//                                          @Override
-//                                          public void onClick(View widget) {
-//                                              super.onClick(widget);
-//                                              if (!mIsLongClickTrigger && mOnChildClickListener != null) {
-//                                                  mOnChildClickListener.onContentClick(ExpandableTextView.this, mCurrState);
-//                                              }
-//                                          }
-//                                      }, 0, ssbExpand.length()
-//                                    - getLengthOfString(mToShrinkHint) - 1,
-//                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     ssbExpand.setSpan(new TouchableSpan(mToShrinkHintColor) {
                                           @Override
                                           public void onClick(View widget) {
@@ -518,6 +496,11 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
 
     /* ----------------------------- ▼对外方法▼ -----------------------------  */
 
+    public void setMaxLinesOnShrink(int lines) {
+        mMaxLinesOnShrink = lines;
+        setText(mOrigText, mCurrState, mFutureTextViewWidth);
+    }
+
     public void setEllipsisHintColor(int color) {
         mToEllipsisHintColor = color;
         setText(mOrigText, getExpandState());
@@ -534,15 +517,20 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
     }
 
     public void setText(final CharSequence text, final int currState) {
+        setText(text, currState, 0);
+    }
+
+    public void setText(final CharSequence text, final int currState, final int viewWidth) {
         this.mCurrState = currState;
         this.mOrigText = text;
-        if (getWidth() == 0 || getMeasuredWidth() == 0) {
+        this.mFutureTextViewWidth = viewWidth;
+        if (viewWidth <= 0 && (getWidth() == 0 || getMeasuredWidth() == 0)) {
             postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    setText(text, currState);
+                    setText(text, currState, viewWidth);
                 }
-            }, 50);
+            }, 5);
         } else {
             setText(getNewTextByConfig());
         }

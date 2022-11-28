@@ -20,11 +20,15 @@ import android.widget.TextView;
 
 import com.chhd.expandabletextview.ExpandableTextView;
 
+import java.util.Random;
+
 public class MainActivity extends AppCompatActivity {
 
     private final String TAG = this.getClass().getSimpleName();
     private SparseArray<Integer> etvStatus = new SparseArray<>();
     private ExpandableTextView etv;
+    private RecyclerView rv;
+    private Adapter adapter = new Adapter();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,9 +47,9 @@ public class MainActivity extends AppCompatActivity {
 
         String text = "花旗：英国秋季报告或减轻抵押贷款利率上升压力\n花旗分析师在一份报告中表示英国政府在周四的秋季报告中宣布的支出削减和增税计划“旨在降低抵押贷款利率”。分析人士称，英国财政大臣亨特的计划(包括增税和削减支出约550亿英镑)减轻了利率上升的压力，这意味着抵押贷款利率上升的压力将会更小。";
 //        String text = "花旗：英国秋季报告或减轻抵押贷款利率\n上升压力\n花旗分析师在一份报告中表示英国政府在周四的秋季报告中宣布的支出削减和增税计划“旨在降低抵押贷款利率”。分析人士称，英国财政大臣亨特的计划(包括增税和削减支出约550亿英镑)减轻了利率上升的压力，这意味着抵押贷款利率上升的压力将会更小。";
-//        SpannableStringBuilder ssb = new SpannableStringBuilder();
-//        ssb.append(text);
-//        ssb.setSpan(new ForegroundColorSpan(Color.GREEN), 0, 4, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        SpannableStringBuilder ssb = new SpannableStringBuilder();
+        ssb.append(text);
+        ssb.setSpan(new ForegroundColorSpan(Color.GREEN), 0, 4, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         etv.setText(text, ExpandableTextView.STATE_SHRINK);
         etv.setOnChildClickListener(new ExpandableTextView.OnChildClickListener() {
             @Override
@@ -82,9 +86,9 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        }, 1000);
 
-        RecyclerView rv = findViewById(R.id.rv);
+        rv = findViewById(R.id.rv);
         rv.setLayoutManager(new LinearLayoutManager(this));
-        rv.setAdapter(new Adapter());
+        rv.setAdapter(adapter);
 
         final TextView tvPrimitive = findViewById(R.id.tv_primitive);
         tvPrimitive.setText(text);
@@ -101,7 +105,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onBtn1Click(View v) {
-        etv.setEllipsisHintColor(Color.GREEN);
+        etv.setMaxLinesOnShrink(new Random().nextInt(7) + 1);
+        adapter.setMaxLinesOnShrink(new Random().nextInt(7) + 1);
+//        etv.setEllipsisHintColor(Color.GREEN);
+//        rv.setAdapter(new Adapter());
+//        rv.setAdapter(adapter);
+//        adapter.notifyDataSetChanged();
     }
 
     public void onBtn2Click(View v) {
@@ -112,9 +121,16 @@ public class MainActivity extends AppCompatActivity {
         etv.setShrinkHintColor(Color.BLUE);
     }
 
+    private int etvWidth;
+
     public class Adapter extends RecyclerView.Adapter<Adapter.Holder> {
 
-        private int etvWidth;
+        int maxLine = 0;
+
+        public void setMaxLinesOnShrink(int maxLine) {
+            this.maxLine = maxLine;
+            notifyDataSetChanged();
+        }
 
         @NonNull
         @Override
@@ -125,16 +141,15 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull final Holder holder, int i) {
             final ExpandableTextView etv = holder.itemView.findViewById(R.id.etv);
-//            etv.post(new Runnable() {
-//                @Override
-//                public void run() {
-//                    etvWidth = etv.getWidth();
-//                }
-//            });
-//            etv.updateForRecyclerView(getString(R.string.text), etvWidth, status);
+            etv.post(new Runnable() {
+                @Override
+                public void run() {
+                    etvWidth = etv.getWidth();
+                }
+            });
             Integer status = etvStatus.get(holder.getLayoutPosition());
             status = status == null ? ExpandableTextView.STATE_SHRINK : status;
-            etv.setText(getString(R.string.text3), status);
+            etv.setText(getString(R.string.text), status, etvWidth);
             etv.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
@@ -173,7 +188,9 @@ public class MainActivity extends AppCompatActivity {
                     etvStatus.put(holder.getLayoutPosition(), view.getExpandState());
                 }
             });
-//            etv.setJZText(getString(R.string.text));
+            if (maxLine > 0) {
+                etv.setMaxLinesOnShrink(maxLine);
+            }
         }
 
         @Override

@@ -73,4 +73,8 @@ public class MyETV extends ExpandableTextView {
             setText(getNewTextByConfig());
         }
     }
+
+    public void setToShrinkHint(String s) {
+        mToShrinkHint = s;
+    }
 }

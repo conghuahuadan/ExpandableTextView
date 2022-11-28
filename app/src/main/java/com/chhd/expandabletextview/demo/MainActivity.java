@@ -106,6 +106,8 @@ public class MainActivity extends AppCompatActivity {
 //        etv.setMaxLinesOnShrink(new Random().nextInt(7) + 1);
 //        adapter.setMaxLinesOnShrink(new Random().nextInt(7) + 1);
 //        etv.setEllipsisHintColor(Color.GREEN);
+        etvStatus.clear();
+        canFold = !canFold;
         rv.setAdapter(new Adapter());
 //        rv.setAdapter(adapter);
 //        adapter.notifyDataSetChanged();
@@ -119,8 +121,9 @@ public class MainActivity extends AppCompatActivity {
         etv.setShrinkHintColor(Color.BLUE);
     }
 
-    private int titleWidth;
-    private int etvWidth;
+    int titleWidth;
+    int etvWidth;
+    boolean canFold = true;
 
     public class Adapter extends RecyclerView.Adapter<Adapter.Holder> {
 
@@ -154,7 +157,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
             Integer status = etvStatus.get(holder.getLayoutPosition());
-            status = status == null ? ExpandableTextView.STATE_SHRINK : status;
+            if (canFold) {
+                status = status == null ? ExpandableTextView.STATE_SHRINK : status;
+            } else {
+                status = status == null ? ExpandableTextView.STATE_EXPAND : status;
+            }
+            etv.setToShrinkHint(canFold ? "收起" : "");
             etv.setTvHeader(tvTitle, titleWidth);
             etv.setText(holder.getAdapterPosition() + ", " + getString(R.string.text), status, etvWidth);
             etv.setOnLongClickListener(new View.OnLongClickListener() {

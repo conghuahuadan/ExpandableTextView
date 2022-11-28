@@ -124,8 +124,7 @@
                 app:layout_constraintLeft_toLeftOf="@id/hy_variety"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/ly_name"
-                tool:text="澳新看好美元中期走高，丹斯克提醒欧美注意美元与黄金波动性" />
-
+                android:text="澳新看好美元中期走高，丹斯克提醒欧美注意美元与黄金波动性" />
 
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/fl_content"
@@ -136,7 +135,7 @@
                 app:layout_constraintRight_toRightOf="@id/tv_title"
                 app:layout_constraintTop_toBottomOf="@id/tv_title">
 
-                <com.chhd.expandabletextview.ExpandableTextView
+                <com.chhd.expandabletextview.demo.MyETV
                     android:id="@+id/etv"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -146,7 +145,7 @@
                     android:textColor="@android:color/holo_green_light"
                     android:textSize="14sp"
                     app:etv_EnableToggle="false"
-                    app:etv_MaxLinesOnShrink="2"
+                    app:etv_MaxLinesOnShrink="0"
                     app:etv_ToExpandHint="展开"
                     app:etv_ToShrinkHint="收起"
                     app:layout_constraintLeft_toLeftOf="parent"

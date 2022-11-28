@@ -16,7 +16,6 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -37,18 +36,18 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
     public static final int STATE_SHRINK = 0;
     public static final int STATE_EXPAND = 1;
 
-    static final String CLASS_NAME_VIEW = "android.view.View";
-    static final String CLASS_NAME_LISTENER_INFO = "android.view.View$ListenerInfo";
-    static final String ELLIPSIS_HINT = "...";
-    static final String GAP_TO_EXPAND_HINT = " ";
-    static final String GAP_TO_SHRINK_HINT = " ";
-    static final int MAX_LINES_ON_SHRINK = 7;
-    static final int TO_ELLIPSIS_HINT_COLOR = -1;
-    static final int TO_EXPAND_HINT_COLOR = 0xFF3498DB;
-    static final int TO_SHRINK_HINT_COLOR = 0xFFE74C3C;
-    static final boolean TOGGLE_ENABLE = true;
-    static final boolean SHOW_TO_EXPAND_HINT = true;
-    static final boolean SHOW_TO_SHRINK_HINT = true;
+    protected static final String CLASS_NAME_VIEW = "android.view.View";
+    protected static final String CLASS_NAME_LISTENER_INFO = "android.view.View$ListenerInfo";
+    protected static final String ELLIPSIS_HINT = "...";
+    protected static final String GAP_TO_EXPAND_HINT = " ";
+    protected static final String GAP_TO_SHRINK_HINT = " ";
+    protected static final int MAX_LINES_ON_SHRINK = 7;
+    protected static final int TO_ELLIPSIS_HINT_COLOR = -1;
+    protected static final int TO_EXPAND_HINT_COLOR = 0xFF3498DB;
+    protected static final int TO_SHRINK_HINT_COLOR = 0xFFE74C3C;
+    protected static final boolean TOGGLE_ENABLE = true;
+    protected static final boolean SHOW_TO_EXPAND_HINT = true;
+    protected static final boolean SHOW_TO_SHRINK_HINT = true;
 
     protected String mEllipsisHint;                                               // 省略符号
     protected String mToExpandHint;                                               // 展开文本
@@ -101,7 +100,7 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
 
     /* ----------------------------- ▼初始化▼ -----------------------------  */
 
-    private void initAttr(Context context, AttributeSet attrs) {
+    protected void initAttr(Context context, AttributeSet attrs) {
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ExpandableTextView);
         mMaxLinesOnShrink = a.getInteger(R.styleable.ExpandableTextView_etv_MaxLinesOnShrink,
                 MAX_LINES_ON_SHRINK);
@@ -134,17 +133,13 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
         a.recycle();
     }
 
-    private void init() {
+    protected void init() {
+        mMaxLinesOnShrink = mMaxLinesOnShrink <= 0 ? 1 : mMaxLinesOnShrink;
+
         mTouchableSpan = new TouchableSpan();
         if (TextUtils.isEmpty(mEllipsisHint)) {
             mEllipsisHint = ELLIPSIS_HINT;
         }
-//        if (TextUtils.isEmpty(mToExpandHint)) {
-//            mToExpandHint = getResources().getString(R.string.to_expand_hint);
-//        }
-//        if (TextUtils.isEmpty(mToShrinkHint)) {
-//            mToShrinkHint = getResources().getString(R.string.to_shrink_hint);
-//        }
         if (mGapToExpandHint == null) {
             mGapToExpandHint = GAP_TO_EXPAND_HINT;
         }
@@ -161,7 +156,6 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
                 } else {
                     obs.removeGlobalOnLayoutListener(this);
                 }
-//                setTextInternal(getNewTextByConfig(), mBufferType);
             }
         });
 
@@ -368,7 +362,7 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
         return mOrigText;
     }
 
-    private Layout getValidLayout() {
+    protected Layout getValidLayout() {
         return mLayout != null ? mLayout : getLayout();
     }
 
@@ -399,23 +393,23 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
         setTextInternal(getNewTextByConfig(), mBufferType);
     }
 
-    private void setTextInternal(CharSequence text, BufferType type) {
+    protected void setTextInternal(CharSequence text, BufferType type) {
         super.setText(text, type);
     }
 
-    private int getLengthOfString(String string) {
+    protected int getLengthOfString(String string) {
         if (string == null)
             return 0;
         return string.length();
     }
 
-    private String getContentOfString(String string) {
+    protected String getContentOfString(String string) {
         if (string == null)
             return "";
         return string;
     }
 
-    private CharSequence removeEndLineBreak(CharSequence text) {
+    protected CharSequence removeEndLineBreak(CharSequence text) {
         CharSequence str = text;
         while (str.toString().endsWith("\n")) {
             str = str.subSequence(0, str.length() - 1);
@@ -456,8 +450,8 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
         mIsToggleTrigger = false;
     }
 
-    OnLongClickListener mOnLongClickListener;
-    boolean mIsLongClickTrigger = false;
+    protected OnLongClickListener mOnLongClickListener;
+    protected boolean mIsLongClickTrigger = false;
 
     @Override
     public void setOnLongClickListener(@Nullable OnLongClickListener l) {
@@ -498,6 +492,7 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
 
     public void setMaxLinesOnShrink(int lines) {
         mMaxLinesOnShrink = lines;
+        mMaxLinesOnShrink = mMaxLinesOnShrink <= 0 ? 1 : mMaxLinesOnShrink;
         setText(mOrigText, mCurrState, mFutureTextViewWidth);
     }
 
@@ -547,7 +542,7 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
 
     /* ----------------------------- ▼内部类▼ -----------------------------  */
 
-    private class TouchableSpan extends ClickableSpan {
+    protected class TouchableSpan extends ClickableSpan {
 
         int textColor = -1;
 

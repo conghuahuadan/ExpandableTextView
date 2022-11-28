@@ -20,8 +20,6 @@ import android.widget.TextView;
 
 import com.chhd.expandabletextview.ExpandableTextView;
 
-import java.util.Random;
-
 public class MainActivity extends AppCompatActivity {
 
     private final String TAG = this.getClass().getSimpleName();
@@ -105,10 +103,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onBtn1Click(View v) {
-        etv.setMaxLinesOnShrink(new Random().nextInt(7) + 1);
-        adapter.setMaxLinesOnShrink(new Random().nextInt(7) + 1);
+//        etv.setMaxLinesOnShrink(new Random().nextInt(7) + 1);
+//        adapter.setMaxLinesOnShrink(new Random().nextInt(7) + 1);
 //        etv.setEllipsisHintColor(Color.GREEN);
-//        rv.setAdapter(new Adapter());
+        rv.setAdapter(new Adapter());
 //        rv.setAdapter(adapter);
 //        adapter.notifyDataSetChanged();
     }
@@ -121,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
         etv.setShrinkHintColor(Color.BLUE);
     }
 
+    private int titleWidth;
     private int etvWidth;
 
     public class Adapter extends RecyclerView.Adapter<Adapter.Holder> {
@@ -140,7 +139,14 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(@NonNull final Holder holder, int i) {
-            final ExpandableTextView etv = holder.itemView.findViewById(R.id.etv);
+            final TextView tvTitle = holder.itemView.findViewById(R.id.tv_title);
+            final MyETV etv = holder.itemView.findViewById(R.id.etv);
+            tvTitle.post(new Runnable() {
+                @Override
+                public void run() {
+                    titleWidth = tvTitle.getWidth();
+                }
+            });
             etv.post(new Runnable() {
                 @Override
                 public void run() {
@@ -149,6 +155,7 @@ public class MainActivity extends AppCompatActivity {
             });
             Integer status = etvStatus.get(holder.getLayoutPosition());
             status = status == null ? ExpandableTextView.STATE_SHRINK : status;
+            etv.setTvHeader(tvTitle, titleWidth);
             etv.setText(getString(R.string.text), status, etvWidth);
             etv.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override

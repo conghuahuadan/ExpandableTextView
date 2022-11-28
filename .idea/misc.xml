@@ -3,6 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/AndroidStudioProjects/Andy/ExpandableTextView/app/src/main/res/layout/activity_main.xml" value="0.17831813576494426" />
+        <entry key="..\:/AndroidStudioProjects/Andy/ExpandableTextView/app/src/main/res/layout/item_list_text.xml" value="0.36666666666666664" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.19166666666666668" />
       </map>
     </option>

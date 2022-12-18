@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         SpannableStringBuilder ssb = new SpannableStringBuilder();
         ssb.append(text);
         ssb.setSpan(new ForegroundColorSpan(Color.GREEN), 0, 4, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        etv.setText(text, ExpandableTextView.STATE_SHRINK);
+        etv.setText(text/*, ExpandableTextView.STATE_SHRINK*/);
         etv.setOnChildClickListener(new ExpandableTextView.OnChildClickListener() {
             @Override
             public void onContentClick(ExpandableTextView view, int state) {
@@ -115,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void onBtn2Click(View v) {
         etv.setExpandHintColor(Color.RED);
+        rv.setAdapter(new Adapter());
     }
 
     public void onBtn3Click(View v) {

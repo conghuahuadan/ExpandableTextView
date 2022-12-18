@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.support.annotation.Nullable;
 import android.text.DynamicLayout;
 import android.text.Layout;
@@ -16,6 +15,7 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -77,6 +77,7 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
     protected boolean mIsToggleTrigger;
 
     protected CharSequence mOrigText;
+    protected boolean mFromNewText = false;
 
     protected OnExpandListener mOnExpandListener;
     protected OnChildClickListener mOnChildClickListener;
@@ -151,11 +152,8 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
             @Override
             public void onGlobalLayout() {
                 ViewTreeObserver obs = getViewTreeObserver();
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    obs.removeOnGlobalLayoutListener(this);
-                } else {
-                    obs.removeGlobalOnLayoutListener(this);
-                }
+                obs.removeGlobalOnLayoutListener(this);
+                setTextInternal(getNewTextByConfig(), mBufferType);
             }
         });
 
@@ -421,6 +419,11 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
 
     @Override
     public void setText(CharSequence text, BufferType type) {
+        if (mFromNewText) {
+            mFromNewText = false;
+        } else {
+            mOrigText = text;
+        }
         mBufferType = type;
         setTextInternal(getNewTextByConfig(), type);
     }
@@ -527,6 +530,7 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
                 }
             }, 5);
         } else {
+            mFromNewText = true;
             setText(getNewTextByConfig());
         }
     }
@@ -538,6 +542,10 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
 
     public int getExpandState() {
         return mCurrState;
+    }
+
+    public CharSequence getOrigText() {
+        return mOrigText;
     }
 
     /* ----------------------------- ▼内部类▼ -----------------------------  */

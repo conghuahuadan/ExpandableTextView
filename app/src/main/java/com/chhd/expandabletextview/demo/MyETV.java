@@ -34,7 +34,7 @@ public class MyETV extends ExpandableTextView {
     public void setTvHeader(TextView tvHeader, int tvHeaderWidth) {
         this.tvHeader = tvHeader;
         this.tvHeaderWidth = tvHeaderWidth;
-        Log.i(TAG, "setTvHeader: " + tvHeaderWidth);
+//        Log.i(TAG, "setTvHeader: " + tvHeaderWidth);
     }
 
     @Override
@@ -69,7 +69,8 @@ public class MyETV extends ExpandableTextView {
             }
             line = line <= 0 ? 1 : line;
             this.mMaxLinesOnShrink = line;
-            Log.i(TAG, "setText: " + tvHeaderWidth + ", " + mMaxLinesOnShrink + ", " + getWidth() + ", " + viewWidth);
+//            Log.i(TAG, "setText: " + tvHeaderWidth + ", " + mMaxLinesOnShrink + ", " + getWidth() + ", " + viewWidth);
+            mFromNewText = true;
             setText(getNewTextByConfig());
         }
     }

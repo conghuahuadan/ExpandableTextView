@@ -29,6 +29,7 @@
             app:etv_EllipsisHint="..."
             app:etv_EnableToggle="false"
             app:etv_GapToExpandHint=" "
+            app:etv_InitState="shrink"
             app:etv_MaxLinesOnShrink="2"
             app:etv_ToExpandHint="展开"
             app:etv_ToExpandHintColor="@android:color/holo_red_light"

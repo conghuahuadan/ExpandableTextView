@@ -7,9 +7,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.DynamicLayout;
+import android.text.Html;
 import android.text.Layout;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.util.SparseArray;
@@ -19,6 +21,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.chhd.expandabletextview.ExpandableTextView;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -43,12 +48,17 @@ public class MainActivity extends AppCompatActivity {
 
         etv = findViewById(R.id.etv);
 
-        String text = "花旗：英国秋季报告或减轻抵押贷款利率上升压力\n花旗分析师在一份报告中表示英国政府在周四的秋季报告中宣布的支出削减和增税计划“旨在降低抵押贷款利率”。分析人士称，英国财政大臣亨特的计划(包括增税和削减支出约550亿英镑)减轻了利率上升的压力，这意味着抵押贷款利率上升的压力将会更小。";
+//        String text = "花旗：英国秋季报告或减轻抵押贷款利率上升压力\n花旗分析师在一份报告中表示英国政府在周四的秋季报告中宣布的支出削减和增税计划“旨在降低抵押贷款利率”。分析人士称，英国财政大臣亨特的计划(包括增税和削减支出约550亿英镑)减轻了利率上升的压力，这意味着抵押贷款利率上升的压力将会更小。";
 //        String text = "花旗：英国秋季报告或减轻抵押贷款利率\n上升压力\n花旗分析师在一份报告中表示英国政府在周四的秋季报告中宣布的支出削减和增税计划“旨在降低抵押贷款利率”。分析人士称，英国财政大臣亨特的计划(包括增税和削减支出约550亿英镑)减轻了利率上升的压力，这意味着抵押贷款利率上升的压力将会更小。";
+
+        String text = "<b>安徽亳州：多子女家庭购新房首次申请公积金贷款额度可上浮10万元<br/>金十数据1月10日讯，亳州市发布《关于支持多子女家庭使用住房公积金贷款的通知》。按照新政，对符合国家生育政策生育的多子女家庭，在亳州市购买新建商品住房且首次申请住房公积金贷款的，贷款最高额度可按家庭当期最高贷款额度限额上浮10万元确定，上浮后的贷款额度不得超过亳州市规定的公积金贷款额度上限。(金十数据APP)</b>";
+//        text = delTags(text);
         SpannableStringBuilder ssb = new SpannableStringBuilder();
         ssb.append(text);
         ssb.setSpan(new ForegroundColorSpan(Color.GREEN), 0, 4, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        etv.setText(text/*, ExpandableTextView.STATE_SHRINK*/);
+        CharSequence html = Html.fromHtml(text);
+        Log.i(TAG, "onCreate html: " + html + ", text: " + text);
+        etv.setText(html/*, ExpandableTextView.STATE_SHRINK*/);
         etv.setOnChildClickListener(new ExpandableTextView.OnChildClickListener() {
             @Override
             public void onContentClick(ExpandableTextView view, int state) {
@@ -86,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
 
         rv = findViewById(R.id.rv);
         rv.setLayoutManager(new LinearLayoutManager(this));
-        rv.setAdapter(adapter);
+//        rv.setAdapter(adapter);
 
         final TextView tvPrimitive = findViewById(R.id.tv_primitive);
         tvPrimitive.setText(text);
@@ -100,6 +110,41 @@ public class MainActivity extends AppCompatActivity {
                 Log.i(TAG, "onCreate 2: " + tvPrimitive.getLineCount() + ", " + mLayout.getLineCount() + ", " + tvPrimitive.getHeight() + ", " + mLayout.getHeight());
             }
         });
+    }
+
+    public static String delTags(String content) {
+        if (content == null) {
+            return "";
+        }
+        content = content.replaceAll("<br[\\s]*/?>", "\n").replaceAll("&nbsp;", " ");
+//        return content.replaceAll("<[^>]+>", "").trim();
+        String copyContent = content;
+        Pattern p = Pattern.compile("<[^>]+>");
+        Matcher matcher = p.matcher(content);
+        while (matcher.find()) {
+            String label = matcher.group();
+            if ("<b>".equals(label) || "</b>".equals(label)) {
+
+            } else {
+                copyContent = copyContent.replace(label, "");
+            }
+        }
+        return replaceWrongUnicode(copyContent.trim(), "");
+    }
+
+    public static String replaceWrongUnicode(String source, String replace) {
+        if (TextUtils.isEmpty(source)) {
+            return source;
+        }
+        if (TextUtils.isEmpty(replace)) {
+            replace = "";
+        }
+        Pattern CRLF = Pattern.compile("([\\u007f-\\u009f]|\\u00ad|[\\u0483-\\u0489]|[\\u0559-\\u055a]|\\u058a|[\\u0591-\\u05bd]|\\u05bf|[\\u05c1-\\u05c2]|[\\u05c4-\\u05c7]|[\\u0606-\\u060a]|[\\u063b-\\u063f]|\\u0674|[\\u06e5-\\u06e6]|\\u070f|[\\u076e-\\u077f]|\\u0a51|\\u0a75|\\u0b44|[\\u0b62-\\u0b63]|[\\u0c62-\\u0c63]|[\\u0ce2-\\u0ce3]|[\\u0d62-\\u0d63]|\\u135f|[\\u200b-\\u200f]|[\\u2028-\\u202e]|\\u2044|\\u2071|[\\uf701-\\uf70e]|[\\uf710-\\uf71a]|\\ufb1e|[\\ufc5e-\\ufc62]|\\ufeff|\\ufffc)");
+        Matcher m = CRLF.matcher(source);
+        if (m.find()) {
+            return m.replaceAll(replace);
+        }
+        return source;
     }
 
     public void onBtn1Click(View v) {

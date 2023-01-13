@@ -16,14 +16,13 @@
         android:paddingLeft="80dp"
         android:paddingRight="20dp">
 
-        <com.chhd.expandabletextview.ExpandableTextView
+        <com.chhd.expandabletextview.demo.MyETV
             android:id="@+id/etv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#fefefe"
             android:lineSpacingExtra="4dp"
             android:padding="10dp"
-            android:text="@string/text"
             android:textColor="@android:color/holo_purple"
             android:textSize="14sp"
             app:etv_EllipsisHint="..."
@@ -38,7 +37,8 @@
             tools:etv_ToEllipsisHintColor="@android:color/holo_orange_light"
             tools:etv_ToExpandIcon="@mipmap/ic_expand"
             tools:etv_ToShrinkIcon="@mipmap/ic_shrink"
-            tools:ignore="SpeakableTextPresentCheck" />
+            tools:ignore="SpeakableTextPresentCheck"
+            tools:text="@string/text" />
 
         <TextView
             android:id="@+id/tv_primitive"

@@ -3,10 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/AndroidStudioProjects/Andy/ExpandableTextView2/app/src/main/res/layout/activity_main.xml" value="0.36614583333333334" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.19166666666666668" />
         <entry key="app/src/main/res/layout/item_list_text.xml" value="0.3458333333333333" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="1.8" project-jdk-type="JavaSDK" />
 </project>

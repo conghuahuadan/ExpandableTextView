@@ -32,11 +32,11 @@
             app:etv_MaxLinesOnShrink="2"
             app:etv_ToExpandHint="展开"
             app:etv_ToExpandHintColor="@android:color/holo_red_light"
-            app:etv_ToShrinkHint="\n收起"
+            tools:etv_ToShrinkHint="\n收起"
             app:etv_ToShrinkHintColor="@android:color/holo_blue_light"
             tools:etv_ToEllipsisHintColor="@android:color/holo_orange_light"
-            tools:etv_ToExpandIcon="@mipmap/ic_expand"
-            tools:etv_ToShrinkIcon="@mipmap/ic_shrink"
+            app:etv_ToExpandIcon="@mipmap/ic_expand"
+            app:etv_ToShrinkIcon="@mipmap/ic_shrink"
             tools:ignore="SpeakableTextPresentCheck"
             tools:text="@string/text" />
 

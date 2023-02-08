@@ -3,7 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/AndroidStudioProjects/Andy/ExpandableTextView2/app/src/main/res/layout/activity_main.xml" value="0.36614583333333334" />
+        <entry key="..\:/AndroidStudioProjects/Andy/ExpandableTextView/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.3828125" />
+        <entry key="..\:/AndroidStudioProjects/Andy/ExpandableTextView/app/src/main/res/drawable/bg_fillet_red.xml" value="0.221875" />
+        <entry key="..\:/AndroidStudioProjects/Andy/ExpandableTextView/app/src/main/res/drawable/ic_launcher_background.xml" value="0.3828125" />
+        <entry key="..\:/AndroidStudioProjects/Andy/ExpandableTextView/app/src/main/res/layout/activity_main.xml" value="0.36666666666666664" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.19166666666666668" />
         <entry key="app/src/main/res/layout/item_list_text.xml" value="0.3458333333333333" />
       </map>

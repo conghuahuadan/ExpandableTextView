@@ -1,6 +1,8 @@
 package com.chhd.expandabletextview.demo;
 
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -15,12 +17,16 @@ import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.util.SparseArray;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.SizeUtils;
 import com.chhd.expandabletextview.ExpandableTextView;
+import com.chhd.superlayout.SuperTextView;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -51,7 +57,8 @@ public class MainActivity extends AppCompatActivity {
 //        String text = "花旗：英国秋季报告或减轻抵押贷款利率上升压力\n花旗分析师在一份报告中表示英国政府在周四的秋季报告中宣布的支出削减和增税计划“旨在降低抵押贷款利率”。分析人士称，英国财政大臣亨特的计划(包括增税和削减支出约550亿英镑)减轻了利率上升的压力，这意味着抵押贷款利率上升的压力将会更小。";
 //        String text = "花旗：英国秋季报告或减轻抵押贷款利率\n上升压力\n花旗分析师在一份报告中表示英国政府在周四的秋季报告中宣布的支出削减和增税计划“旨在降低抵押贷款利率”。分析人士称，英国财政大臣亨特的计划(包括增税和削减支出约550亿英镑)减轻了利率上升的压力，这意味着抵押贷款利率上升的压力将会更小。";
 
-        String text = "<b>安徽亳州：多子女家庭购新房首次申请公积金贷款额度可上浮10万元<br/>金十数据1月10日讯，亳州市发布《关于支持多子女家庭使用住房公积金贷款的通知》。按照新政，对符合国家生育政策生育的多子女家庭，在亳州市购买新建商品住房且首次申请住房公积金贷款的，贷款最高额度可按家庭当期最高贷款额度限额上浮10万元确定，上浮后的贷款额度不得超过亳州市规定的公积金贷款额度上限。(金十数据APP)</b>";
+//        String text = "<b>安徽亳州：多子女家庭购新房首次申请公积金贷款额度可上浮10万元<br/>金十数据1月10日讯，亳州市发布《关于支持多子女家庭使用住房公积金贷款的通知》。按照新政，对符合国家生育政策生育的多子女家庭，在亳州市购买新建商品住房且首次申请住房公积金贷款的，贷款最高额度可按家庭当期最高贷款额度限额上浮10万元确定，上浮后的贷款额度不得超过亳州市规定的公积金贷款额度上限。(金十数据APP)</b>";
+        String text = "<b>安徽亳州：多子女家庭购新房首次申请公积金贷款额度可上浮10万元金十数据1月10日讯，亳州市发布《关于支持多子女家庭使用住房公积金贷款的通知》。按照新政，对符合国家生育政策生育的多子女家庭，在亳州市购买新建商品住房且首次申请住房公积金贷款的，贷款最高额度可按家庭当期最高贷款额度限额上浮10万元确定，上浮后的贷款额度不得超过亳州市规定的公积金贷款额度上限。(金十数据APP)</b>";
 //        text = delTags(text);
         SpannableStringBuilder ssb = new SpannableStringBuilder();
         ssb.append(text);
@@ -107,7 +114,8 @@ public class MainActivity extends AppCompatActivity {
                         Layout.Alignment.ALIGN_NORMAL,
                         tvPrimitive.getLineSpacingMultiplier(), tvPrimitive.getLineSpacingExtra(), tvPrimitive.getIncludeFontPadding());
 
-                Log.i(TAG, "onCreate 2: " + tvPrimitive.getLineCount() + ", " + mLayout.getLineCount() + ", " + tvPrimitive.getHeight() + ", " + mLayout.getHeight());
+                Log.i(TAG, "onCreate 2: " + tvPrimitive.getLineCount() + ", " + mLayout.getLineCount()
+                        + ", " + tvPrimitive.getHeight() + ", " + mLayout.getHeight());
             }
         });
     }
@@ -159,8 +167,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onBtn2Click(View v) {
-        etv.setExpandHintColor(Color.RED);
-        rv.setAdapter(new Adapter());
+//        etv.setExpandHintColor(Color.RED);
+//        rv.setAdapter(new Adapter());
+//        SuperTextView textView = new SuperTextView(this);
+//        textView.setText("精英");
+//        textView.setBackground(getResources().getDrawable(R.drawable.bg_fillet_red));
+//        textView.setTextColor(Color.RED);
+//        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
+//        textView.setGravity(Gravity.CENTER);
+//        textView.getSuperHelper().setRoundCorner(SizeUtils.dp2px(2));
+//        textView.getSuperHelper().setStrokeColor(Color.RED);
+//        textView.setPadding(SizeUtils.dp2px(4), SizeUtils.dp2px(2), SizeUtils.dp2px(4), SizeUtils.dp2px(2));
+//        textView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+//                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+//        textView.layout(0, 0, textView.getMeasuredWidth(), textView.getMeasuredHeight());
+//        textView.setDrawingCacheEnabled(true);
+//        textView.buildDrawingCache();
+//        Bitmap bitmap = textView.getDrawingCache();
+//        BitmapDrawable drawable = new BitmapDrawable(getResources(), bitmap);
+//        Log.i(TAG, "onBtn2Click: " + textView.getMeasuredWidth() + ", " + bitmap.getWidth() + ", " + drawable.getIntrinsicWidth());
+//        etv.setToExpandIcon(drawable);
+//        etv.setToExpandIcon(getResources().getDrawable(R.mipmap.ic_expand));
+//        etv.setToShrinkIcon(getResources().getDrawable(R.mipmap.ic_shrink));
     }
 
     public void onBtn3Click(View v) {

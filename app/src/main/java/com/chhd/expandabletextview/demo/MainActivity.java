@@ -1,8 +1,6 @@
 package com.chhd.expandabletextview.demo;
 
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -17,16 +15,12 @@ import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.util.SparseArray;
-import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.blankj.utilcode.util.SizeUtils;
 import com.chhd.expandabletextview.ExpandableTextView;
-import com.chhd.superlayout.SuperTextView;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -58,12 +52,13 @@ public class MainActivity extends AppCompatActivity {
 //        String text = "花旗：英国秋季报告或减轻抵押贷款利率\n上升压力\n花旗分析师在一份报告中表示英国政府在周四的秋季报告中宣布的支出削减和增税计划“旨在降低抵押贷款利率”。分析人士称，英国财政大臣亨特的计划(包括增税和削减支出约550亿英镑)减轻了利率上升的压力，这意味着抵押贷款利率上升的压力将会更小。";
 
 //        String text = "<b>安徽亳州：多子女家庭购新房首次申请公积金贷款额度可上浮10万元<br/>金十数据1月10日讯，亳州市发布《关于支持多子女家庭使用住房公积金贷款的通知》。按照新政，对符合国家生育政策生育的多子女家庭，在亳州市购买新建商品住房且首次申请住房公积金贷款的，贷款最高额度可按家庭当期最高贷款额度限额上浮10万元确定，上浮后的贷款额度不得超过亳州市规定的公积金贷款额度上限。(金十数据APP)</b>";
-        String text = "<b>安徽亳州：多子女家庭购新房首次申请公积金贷款额度可上浮10万元金十数据1月10日讯，亳州市发布《关于支持多子女家庭使用住房公积金贷款的通知》。按照新政，对符合国家生育政策生育的多子女家庭，在亳州市购买新建商品住房且首次申请住房公积金贷款的，贷款最高额度可按家庭当期最高贷款额度限额上浮10万元确定，上浮后的贷款额度不得超过亳州市规定的公积金贷款额度上限。(金十数据APP)</b>";
+//        String text = "<b>安徽亳州：多子女家庭购新房首次申请公积金贷款额度可上浮10万元金十数据1月10日讯，亳州市发布《关于支持多子女家庭使用住房公积金贷款的通知》。按照新政，对符合国家生育政策生育的多子女家庭，在亳州市购买新建商品住房且首次申请住房公积金贷款的，贷款最高额度可按家庭当期最高贷款额度限额上浮10万元确定，上浮后的贷款额度不得超过亳州市规定的公积金贷款额度上限。(金十数据APP)</b>";
+        String text = "金十数据2月27日讯，近日，江苏银保监局出台《关于银行业保险业加大和优化金融供给 助力我省经济运行率先整体好转的通知》，提出“一有力、七优化、两加强”十个方面的具体举措，全力支持江苏省经济运行率先整体好转。《通知》要求督促银行机构积极向总行争取，推动更多资金入苏；保险公司要加强项目调研推介，努力推动总部资金投向江苏地区。（上证报）";
 //        text = delTags(text);
         SpannableStringBuilder ssb = new SpannableStringBuilder();
         ssb.append(text);
         ssb.setSpan(new ForegroundColorSpan(Color.GREEN), 0, 4, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        CharSequence html = Html.fromHtml(text);
+        CharSequence html = TextImgUtils.addSuffixImg(Html.fromHtml(text), getResources().getDrawable(R.mipmap.ic_expand));
         Log.i(TAG, "onCreate html: " + html + ", text: " + text);
         etv.setText(html/*, ExpandableTextView.STATE_SHRINK*/);
         etv.setOnChildClickListener(new ExpandableTextView.OnChildClickListener() {

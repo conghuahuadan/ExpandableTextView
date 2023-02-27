@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:background="@android:color/holo_orange_light"
         android:orientation="vertical"
-        android:paddingLeft="80dp"
+        android:paddingLeft="36dp"
         android:paddingRight="20dp">
 
         <com.chhd.expandabletextview.demo.MyETV
@@ -28,15 +28,16 @@
             app:etv_EllipsisHint="..."
             app:etv_EnableToggle="false"
             app:etv_GapToExpandHint=" "
+            android:lineSpacingMultiplier="1.2"
             app:etv_InitState="shrink"
-            app:etv_MaxLinesOnShrink="2"
+            app:etv_MaxLinesOnShrink="5"
             app:etv_ToExpandHint="展开"
             app:etv_ToExpandHintColor="@android:color/holo_red_light"
             tools:etv_ToShrinkHint="\n收起"
             app:etv_ToShrinkHintColor="@android:color/holo_blue_light"
             tools:etv_ToEllipsisHintColor="@android:color/holo_orange_light"
-            app:etv_ToExpandIcon="@mipmap/ic_expand"
-            app:etv_ToShrinkIcon="@mipmap/ic_shrink"
+            tools:etv_ToExpandIcon="@mipmap/ic_expand"
+            tools:etv_ToShrinkIcon="@mipmap/ic_shrink"
             tools:ignore="SpeakableTextPresentCheck"
             tools:text="@string/text" />
 

@@ -11,7 +11,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.ref.WeakReference;
 
-class AlignImageSpan extends ImageSpan {
+public class AlignImageSpan extends ImageSpan {
 
     static final int ALIGN_TOP = 3; // 顶部对齐
     static final int ALIGN_CENTER = 4; // 垂直居中

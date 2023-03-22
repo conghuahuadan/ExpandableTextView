@@ -497,6 +497,14 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
 
     /* ----------------------------- ▼对外方法▼ -----------------------------  */
 
+    public OnExpandListener getOnExpandListener(){
+        return mOnExpandListener;
+    }
+
+    public OnChildClickListener getOnChildClickListener(){
+        return mOnChildClickListener;
+    }
+
     public void setMaxLinesOnShrink(int lines) {
         mMaxLinesOnShrink = lines;
         mMaxLinesOnShrink = mMaxLinesOnShrink <= 0 ? 1 : mMaxLinesOnShrink;

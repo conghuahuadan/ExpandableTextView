@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:background="@android:color/holo_orange_light"
         android:orientation="vertical"
-        android:paddingLeft="36dp"
+        android:paddingLeft="39dp"
         android:paddingRight="20dp">
 
         <com.chhd.expandabletextview.demo.MyETV
